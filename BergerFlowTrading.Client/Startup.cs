@@ -1,0 +1,31 @@
+using BergerFlowTrading.Shared.HttpUnitOfWork;
+using BergerFlowTrading.Shared.HttpUnitOfWork.Identity;
+using BergerFlowTrading.Shared.HttpUnitOfWork.Repository;
+using BergerFlowTrading.Shared.Storage;
+using Microsoft.AspNetCore.Components.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace BergerFlowTrading.Client
+{
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        { 
+
+            services.AddSingleton<LocalStorageService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<LogHttpResponse>();
+            services.AddSingleton<IdentityService>();
+            services.AddSingleton<HttpExchangeRepository>();
+            services.AddSingleton<HttpUserExchangeSecretRepository>();
+            services.AddSingleton<HttpLimitArbitrageStrategy4SettingsRepository>();
+            services.AddSingleton<HttpUnitOfWork>();
+        }
+
+        public void Configure(IComponentsApplicationBuilder app)
+        {
+            app.AddComponent<App>("app");
+        }
+    }
+}

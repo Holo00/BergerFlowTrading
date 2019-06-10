@@ -1,0 +1,111 @@
+﻿@using BergerFlowTrading.Shared.DTO.Identity
+
+<div class="user-info">
+    @if (UserState.UserStateMode == UserStateMode.Init)
+    {
+        <text>...</text>
+    }
+    else if (UserState.UserStateMode == UserStateMode.SignedIn)
+    {
+        <div>
+            <span class="username">@UserState.CurrentUser.UserName</span>
+            <span class="sign-out" onclick="@UserState.SignOut">Sign out</span>
+        </div>
+    }
+    else if (UserState.UserStateMode == UserStateMode.SignInInProgress)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Sign In</h3>
+                        <button type="button" class="close" onclick="@Cancel">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Email</label>
+                                <input for="Name" class="form-control" bind="@dtoLogin.Email" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Password</label>
+                                <input for="Name" class="form-control" bind="@dtoLogin.Password" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                            <button class="btn btn-block btn-success" onclick="@(async () => await UserState.SignIn(dtoLogin))" data-dismiss="modal">Sign In</button>
+                            <a onclick="@OnIsSignUpMode">Sign Up?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (UserState.UserStateMode == UserStateMode.SignUpInProgress)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Sign Up</h3>
+                        <button type="button" class="close" onclick="@Cancel">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Email</label>
+                                <input for="Name" class="form-control" bind="@dtoRegister.Email" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Password</label>
+                                <input for="Name" class="form-control" bind="@dtoRegister.Password" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Password</label>
+                                <input for="Name" class="form-control" bind="@dtoRegister.ConfirmPassword" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-block btn-success" onclick="@(async () => await UserState.SignUp(dtoRegister))" data-dismiss="modal">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (UserState.UserStateMode == UserStateMode.SignedOut)
+    {
+        <button onclick="@OnIsSignInMode" class="sign-in">Sign in</button>
+    }
+</div>
+
+@functions {
+    [CascadingParameter] UserStateProvider UserState { get; set; }
+
+    private LoginDTO dtoLogin;
+    private RegisterDTO dtoRegister;
+
+    private void OnIsSignInMode()
+    {
+        dtoLogin = new LoginDTO();
+        UserState.UserStateMode = UserStateMode.SignInInProgress;
+        StateHasChanged();
+    }
+
+    private void OnIsSignUpMode()
+    {
+        dtoRegister = new RegisterDTO();
+        UserState.UserStateMode = UserStateMode.SignUpInProgress;
+        StateHasChanged();
+    }
+
+    private void Cancel()
+    {
+        UserState.UserStateMode = UserStateMode.SignedOut;
+        StateHasChanged();
+    }
+}

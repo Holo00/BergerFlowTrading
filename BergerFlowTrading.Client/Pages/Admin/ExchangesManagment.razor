@@ -1,0 +1,239 @@
+﻿@using BergerFlowTrading.Shared.DTO.Data
+@using BergerFlowTrading.Shared.HttpUnitOfWork
+
+@page "/ExchangesManagment"
+
+@inject HttpUnitOfWork uow
+
+
+<h1>Exchanges Settings</h1>
+<br />
+<div>
+    <div style="float:left">
+        <button class="btn btn-primary" onclick="@AddState">Add Exchange</button>
+    </div>
+</div>
+<br />
+@if (exchanges == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class='table table-striped table-sm'>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>API URL</th>
+                <th>WSS URL</th>
+                <th>Class Name</th>
+                <th>Api Timeout Milliseconds</th>
+                <th>Delay Between Calls Milliseconds</th>
+                <th>Rate Limit Interval Seconds</th>
+                <th>Rate Max Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var exx in exchanges)
+            {
+            <tr>
+                <td>@exx.Name</td>
+                <td>@exx.ApiUrl</td>
+                <td>@exx.WSS_Url</td>
+                <td>@exx.FacadeClassName</td>
+                <td>@exx.ApiTimeoutMilliseconds</td>
+                <td>@exx.DelayBetweenCallMilliseonds</td>
+                <td>@exx.RateLimitIntervalSeconds</td>
+                <td>@exx.RateMaxQuantity</td>
+                <td>
+                    <button class="btn btn-info" onclick="@(async () => await EditState(@exx.ID))">Edit</button>
+                    <button class="btn btn-danger" onclick="@(async () => await DeleteState(@exx.ID))">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    if (isAdd)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">@modalTitle</h3>
+                        <button type="button" class="close" onclick="@closeModal">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Name</label>
+                                <input for="Name" class="form-control" bind="@exchange.Name" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Api URL</label>
+                                <input for="Name" class="form-control" bind="@exchange.ApiUrl" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">WSS URL</label>
+                                <input for="Name" class="form-control" bind="@exchange.WSS_Url" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Class Name</label>
+                                <input for="Name" class="form-control" bind="@exchange.FacadeClassName" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Api Timeout Milliseconds</label>
+                                <input for="Name" class="form-control" bind="@exchange.ApiTimeoutMilliseconds" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Delay Between Calls Milliseconds</label>
+                                <input for="Name" class="form-control" bind="@exchange.DelayBetweenCallMilliseonds" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Rate Limit Interval Seconds</label>
+                                <input for="Name" class="form-control" bind="@exchange.RateLimitIntervalSeconds" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Rate Max Quantity</label>
+                                <input for="Name" class="form-control" bind="@exchange.RateMaxQuantity" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-block btn-success" onclick="@(async () => await Save())" data-dismiss="modal">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    if (isDelete)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Delete Exchange Settings</h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Do you want to delete this setting?</h4>
+                        <table class="table  table-striped table-sm">
+                            <tr>
+                                <td>Name</td>
+                                <td>@exchange.Name</td>
+                            </tr>
+                            <tr>
+                                <td>Api URL</td>
+                                <td>@exchange.ApiUrl</td>
+                            </tr>
+                            <tr>
+                                <td>WSS URL</td>
+                                <td>@exchange.WSS_Url</td>
+                            </tr>
+                            <tr>
+                                <td>Class Name</td>
+                                <td>@exchange.FacadeClassName</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>@exchange.ApiTimeoutMilliseconds</td>
+                            </tr>
+                            <tr>
+                                <td>Delay Between Call Milliseconds</td>
+                                <td>@exchange.DelayBetweenCallMilliseonds</td>
+                            </tr>
+                            <tr>
+                                <td>Rate Limit Interval Seconds</td>
+                                <td>@exchange.RateLimitIntervalSeconds</td>
+                            </tr>
+                            <tr>
+                                <td>Rate Max QUantity</td>
+                                <td>@exchange.RateMaxQuantity</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger" onclick="@(async () => await Delete(exchange.ID))" data-dismiss="modal">YES</button>
+                        <button class="btn btn-warning" onclick="@closeModal">NO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@functions {
+    List<ExchangeDTO> exchanges;
+    ExchangeDTO exchange;
+
+    protected bool isDelete = false;
+    protected bool isAdd = false;
+
+    protected string modalTitle { get; set; }
+
+
+    protected override async Task OnInitAsync()
+    {
+        await Load();
+    }
+
+    protected async Task Load()
+    {
+        exchanges = await uow.HttpExchangeRepository.GetAll();
+    }
+
+    protected async Task Save()
+    {
+        if (exchange.ID == null)
+        {
+            await uow.HttpExchangeRepository.Create(exchange);
+        }
+        else
+        {
+            await uow.HttpExchangeRepository.Update(exchange);
+        }
+
+        this.isAdd = false;
+        await Load();
+    }
+
+    protected async Task Delete(int? id)
+    {
+        if (exchange.ID != null)
+        {
+            await uow.HttpExchangeRepository.Delete(id.Value);
+        }
+
+        this.isDelete = false;
+        await Load();
+    }
+
+
+    protected void AddState()
+    {
+        exchange = new ExchangeDTO();
+        this.modalTitle = "Add Exchange";
+        this.isAdd = true;
+    }
+
+    protected async Task EditState(int? ID)
+    {
+        exchange = await uow.HttpExchangeRepository.GetById(ID.Value);
+        this.modalTitle = "Edit Exchange";
+        this.isAdd = true;
+    }
+
+    protected async Task DeleteState(int? ID)
+    {
+        exchange = await uow.HttpExchangeRepository.GetById(ID.Value);
+        this.isDelete = true;
+    }
+
+
+    protected void closeModal()
+    {
+        this.isAdd = false;
+        this.isDelete = false;
+    }
+}
