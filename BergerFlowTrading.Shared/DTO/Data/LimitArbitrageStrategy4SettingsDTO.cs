@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BergerFlowTrading.Shared.DTO.Data
 {
-    public class LimitArbitrageStrategy4SettingsDTO: UserDataDTO
+    public class LimitArbitrageStrategy4SettingsDTO: UserDataDTO, IStrategySettingDTO
     {
         public int? Exchange_ID_1 { get; set; }
         public virtual ExchangeDTO Exchange_1 { get; set; }
@@ -21,6 +21,7 @@ namespace BergerFlowTrading.Shared.DTO.Data
         public decimal Min_Price { get; set; }
         public decimal Max_Price { get; set; }
         public decimal BaseCurrency_Share_Percentage { get; set; }
+        public string StrategyName { get; set; }
     }
 
     public enum ValueCurrency

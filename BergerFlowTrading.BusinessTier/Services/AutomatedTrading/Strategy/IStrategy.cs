@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BergerFlowTrading.Shared.DTO.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -18,5 +19,6 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy
         bool IsRunning { get; }
         string Name { get; }
         StrategyType Type { get; }
+        IStrategySettingDTO strategyInfo { get; }
     }
 }

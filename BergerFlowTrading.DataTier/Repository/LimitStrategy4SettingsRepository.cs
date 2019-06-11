@@ -20,7 +20,7 @@ namespace BergerFlowTrading.DataTier.Repository
 
         public async Task<List<LimitArbitrageStrategy4SettingsDTO>> GetActivesOrBalanceManage()
         {
-            var result = this.Query(x => x.ManagementBalanceON || x.Active, null, false).ToList();
+            var result = this.Query(x => x.ManagementBalanceON || x.Active, this.usualIncludes, false).ToList();
             return result.Select(x => mapper.Map<LimitArbitrageStrategy4Settings, LimitArbitrageStrategy4SettingsDTO>(x)).ToList();
         }
     }

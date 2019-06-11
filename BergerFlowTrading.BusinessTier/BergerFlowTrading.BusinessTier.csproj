@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Services\DataServices\" />
     <Folder Include="Services\Identity\" />
   </ItemGroup>
 

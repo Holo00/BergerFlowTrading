@@ -39,11 +39,11 @@ namespace BergerFlowTrading.BusinessTier.Services
             this._configuration = configuration;
         }
 
-        public IQueryable<AppUser> Users
+        public List<AppUser> Users
         {
             get
             {
-                return _userManager.Users;
+                return _userManager.Users.ToList();
             }
         }
 

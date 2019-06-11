@@ -12,6 +12,15 @@ namespace BergerFlowTrading.Model
         [Required]
         [Key]
         public virtual int? ID { get; set; }
+
+        [Required]
+        public string CreatedBy { get; set; }
+        [Required]
+        public string UpdatedBy { get; set; }
+        [Required]
+        public DateTime CreatedTimeStamp { get; set; }
+        [Required]
+        public DateTime UpdatedTimeStamp { get; set; }
     }
 
     public abstract class AsUserModel : BaseModel
