@@ -16,24 +16,20 @@ namespace BergerFlowTrading.Worker
     {
         private readonly ILogger<Worker> _logger;
         private readonly TradingPlatform platform;
-        private readonly IdentityService idService;
 
         public Worker(ILogger<Worker> logger
                     , TradingPlatform platform
-                    , IdentityService idService
             )
         {
             this._logger = logger;
             this.platform = platform;
-            this.idService = idService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var users = this.idService.Users;
-                platform.ResetUsersStrategies(users);
+                await platform.RunStrategies();
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 await Task.Delay(3600000, stoppingToken);
             }

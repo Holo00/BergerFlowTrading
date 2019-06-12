@@ -39,7 +39,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy.Arbi
         private SemaphoreSlim quoteSemaphore { get; set; }
         private SemaphoreSlim concurrentSemaphores { get; set; }
 
-
+        public IStrategySettingDTO strategyInfo { get {return this.settings;} }
 
         public LimitArbitrage4Strategy(LimitArbitrageStrategy4SettingsDTO settings,
                                         ISpotExchangeFacade exchangefacade1,

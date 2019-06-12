@@ -13,28 +13,29 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
     public class TradingPlatform
     {
         private readonly StrategySettingsFactory settingsFactory;
+        private readonly StrategyFactory strategyFactory;
 
         private readonly ILoggingService logger;
 
         public Dictionary<string, CancellationTokenSource> strategyTokens { get; private set; }
 
+        private Dictionary<string, SemaphoreSlim> currencySemaphores;
         private SemaphoreSlim concurrentSemaphore;
-        private Dictionary<string, SemaphoreSlim> currencySemaphores { get; set; }
 
         private List<IStrategy> strategies { get; set; }
 
 
         public TradingPlatform(StrategySettingsFactory settingsFactory
+                                , StrategyFactory strategyFactory
                                 , ILoggingService logger
 
 
             )
         {
             this.settingsFactory = settingsFactory;
+            this.strategyFactory = strategyFactory;
             this.strategyTokens = new Dictionary<string, CancellationTokenSource>();
 
-            this.concurrentSemaphore = new SemaphoreSlim(100, 100);
-            this.currencySemaphores = new Dictionary<string, SemaphoreSlim>();
 
             this.strategies = new List<IStrategy>();
         }
@@ -42,41 +43,51 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
 
         public async Task<bool> RunStrategies()
         {
-            List<IStrategySettingDTO> newStraetgies = await this.settingsFactory.LoadStrategies();
-            IEnumerable<IStrategySettingDTO> runningStrats = this.strategies.Select(x => x.strategyInfo);
+            try
+            {
+                List<IStrategySettingDTO> newStraetgies = await this.settingsFactory.LoadStrategies();
+                IEnumerable<IStrategySettingDTO> runningStrats = this.strategies.Select(x => x.strategyInfo);
 
-            List<Task<IEnumerable<IStrategySettingDTO>>> stoppingTask = new List<Task<IEnumerable<IStrategySettingDTO>>>();
+                List<Task<IEnumerable<IStrategySettingDTO>>> stoppingTask = new List<Task<IEnumerable<IStrategySettingDTO>>>();
 
-            //Stop strategies the were removed
-            //Removes stopped strategies from the pool
-            stoppingTask.Add(this.StopStrategies(runningStrats, newStraetgies));
+                //Stop strategies the were removed
+                //Removes stopped strategies from the pool
+                stoppingTask.Add(this.StopStrategies(runningStrats, newStraetgies));
 
-            //Stop strategies that were updated
-            //Removes updated strategies from the pool
-            stoppingTask.Add(this.StopUpdateStrategies(runningStrats, newStraetgies));
+                //Stop strategies that were updated
+                //Removes updated strategies from the pool
+                stoppingTask.Add(this.StopUpdateStrategies(runningStrats, newStraetgies));
 
-            List<IStrategySettingDTO> stoppedStratsDTO = (await Task.WhenAll(stoppingTask)).SelectMany(x => x).ToList();
-            IEnumerable<IStrategy> stoppedStrats = this.strategies.Where(x => stoppedStratsDTO.Contains(x.strategyInfo));
-            this.strategies.RemoveAll(x => stoppedStratsDTO.Contains(x.strategyInfo));
+                List<IStrategySettingDTO> stoppedStratsDTO = (await Task.WhenAll(stoppingTask)).SelectMany(x => x).ToList();
+                IEnumerable<IStrategy> stoppedStrats = this.strategies.Where(x => stoppedStratsDTO.Contains(x.strategyInfo));
+                this.strategies.RemoveAll(x => stoppedStratsDTO.Contains(x.strategyInfo));
 
-            //Start strategies that were added
-            //Add strategies to the pool
-            await this.StartStrategies(newStraetgies);
+                //Start strategies that were added
+                //Add strategies to the pool
+                await this.StartStrategies(newStraetgies);
 
-            //dispose of unused strategies
-            //Dispose of the unused exchanges
+                //dispose of unused strategies
+                this.DisposeOfStrategies(stoppedStrats);
+                //Dispose of the unused exchanges
+                this.DisposeOfExchanges(stoppedStrats);
 
-            return true;
+                return true;
+            }
+            catch(Exception ex)
+            {
+                //TODO logs
+                throw;
+            }
         }
 
         private void DisposeOfStrategies(IEnumerable<IStrategy> strats)
         {
-
+            //todo
         }
 
-        private void DisposeOfStrategies(IEnumerable<IStrategySettingDTO> strats)
+        private void DisposeOfExchanges(IEnumerable<IStrategy> strats)
         {
-
+            //todo
         }
 
 
@@ -88,7 +99,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
 
             foreach (IStrategySettingDTO s in newStrategies)
             {
-                IStrategy strat = StrategyFactory.CreateStrategy(s, this.GetCurrencySemaphore, this.concurrentSemaphore, this.logger);
+                IStrategy strat = strategyFactory.CreateStrategy(s, ref this.currencySemaphores, ref this.concurrentSemaphore);
 
                 if(strat != null)
                 {
@@ -142,19 +153,6 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
             IStrategy runningStrategy = this.strategies.FirstOrDefault(x => x.Name == strat.StrategyName);
             await runningStrategy.Stop();
             return true;
-        }
-
-        public SemaphoreSlim GetCurrencySemaphore(string currency)
-        {
-            var sem = currencySemaphores[currency];
-
-            if (sem == null)
-            {
-                sem = new SemaphoreSlim(1, 1);
-                currencySemaphores[currency] = sem;
-            }
-
-            return sem;
         }
     }
 }

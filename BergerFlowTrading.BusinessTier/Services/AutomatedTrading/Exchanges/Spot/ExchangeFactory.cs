@@ -26,7 +26,6 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             this.logger = logger;
         }
 
-
         public async Task<ISpotExchangeFacade> CreateExchanges(ExchangeDTO exx)
         {
             ISpotExchangeFacade fac = null;
