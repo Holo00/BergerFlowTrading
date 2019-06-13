@@ -110,6 +110,10 @@ namespace BergerFlowTrading.DataTier.Repository
 
         protected virtual async Task<bool> Insert(TEntity entity, string userId, bool andSave = true)
         {
+            entity.CreatedBy = userId;
+            entity.CreatedTimeStamp = DateTime.UtcNow;
+            entity.UpdatedBy = userId;
+            entity.UpdatedTimeStamp = DateTime.UtcNow;
             entity.User_ID = userId;
             this.ctxt.Set<TEntity>().Add(entity);
 
@@ -136,6 +140,10 @@ namespace BergerFlowTrading.DataTier.Repository
         {
             foreach(TEntity entity in entities)
             {
+                entity.CreatedBy = userId;
+                entity.CreatedTimeStamp = DateTime.UtcNow;
+                entity.UpdatedBy = userId;
+                entity.UpdatedTimeStamp = DateTime.UtcNow;
                 entity.User_ID = userId;
             }
 
@@ -166,7 +174,9 @@ namespace BergerFlowTrading.DataTier.Repository
         }
 
         protected virtual async Task<bool> Update(TEntity entity, string userId, bool andSave = true)
-        { 
+        {
+            entity.UpdatedBy = userId;
+            entity.UpdatedTimeStamp = DateTime.UtcNow;
             entity.User_ID = userId;
             this.ctxt.Entry<TEntity>(entity).State = EntityState.Modified;
 
@@ -194,6 +204,8 @@ namespace BergerFlowTrading.DataTier.Repository
         {
             foreach (TEntity entity in entities)
             {
+                entity.UpdatedBy = userId;
+                entity.UpdatedTimeStamp = DateTime.UtcNow;
                 entity.User_ID = userId;
                 this.ctxt.Entry<TEntity>(entity).State = EntityState.Modified;
             }

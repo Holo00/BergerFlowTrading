@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BergerFlowTrading.Server.Controllers
@@ -60,7 +61,8 @@ namespace BergerFlowTrading.Server.Controllers
         {
             try
             {
-                await this.repo.Insert(dto);
+                string userId = this.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                await this.repo.Insert(dto, userId);
                 return Ok();
             }
             catch (Exception ex)
@@ -76,7 +78,8 @@ namespace BergerFlowTrading.Server.Controllers
         {
             try
             {
-                await this.repo.Update(dto);
+                string userId = this.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                await this.repo.Update(dto, userId);
                 return Ok();
             }
             catch (Exception ex)

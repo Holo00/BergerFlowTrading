@@ -76,19 +76,23 @@ namespace BergerFlowTrading.DataTier.Repository
         }
       
 
-        public virtual async Task<bool> Insert(DTO dto)
+        public virtual async Task<bool> Insert(DTO dto, string userId)
         {
-            return await this.Insert(dto, true);
+            return await this.Insert(dto, userId, true);
         }
 
-        protected virtual async Task<bool> Insert(DTO dto, bool andSave = true)
+        protected virtual async Task<bool> Insert(DTO dto, string userId, bool andSave = true)
         {
             TEntity entity = mapper.Map<DTO, TEntity>(dto);
-            return await this.Insert(entity, andSave);
+            return await this.Insert(entity, userId, andSave);
         }
 
-        protected virtual async Task<bool> Insert(TEntity entity, bool andSave = true)
+        protected virtual async Task<bool> Insert(TEntity entity, string userId, bool andSave = true)
         {
+            entity.CreatedBy = userId;
+            entity.CreatedTimeStamp = DateTime.UtcNow;
+            entity.UpdatedBy = userId;
+            entity.UpdatedTimeStamp = DateTime.UtcNow;
             await this.ctxt.Set<TEntity>().AddAsync(entity);
 
             if (andSave)
@@ -99,19 +103,27 @@ namespace BergerFlowTrading.DataTier.Repository
             return true;
         }
 
-        public virtual async Task<bool> Insert(IEnumerable<DTO> dtos)
+        public virtual async Task<bool> Insert(IEnumerable<DTO> dtos, string userId)
         {
-            return await this.Insert(dtos, true);
+            return await this.Insert(dtos, userId, true);
         }
 
-        protected virtual async Task<bool> Insert(IEnumerable<DTO> dtos, bool andSave = true)
+        protected virtual async Task<bool> Insert(IEnumerable<DTO> dtos, string userId, bool andSave = true)
         {
             IEnumerable<TEntity> entities = mapper.Map<IEnumerable<DTO>, IEnumerable<TEntity>>(dtos);
-            return await this.Insert(entities, andSave);
+            return await this.Insert(entities, userId, andSave);
         }
 
-        protected virtual async Task<bool> Insert(IEnumerable<TEntity> entities, bool andSave = true)
+        protected virtual async Task<bool> Insert(IEnumerable<TEntity> entities, string userId, bool andSave = true)
         {
+            foreach(TEntity entity in entities)
+            {
+                entity.CreatedBy = userId;
+                entity.CreatedTimeStamp = DateTime.UtcNow;
+                entity.UpdatedBy = userId;
+                entity.UpdatedTimeStamp = DateTime.UtcNow;
+            }
+
             await this.ctxt.Set<TEntity>().AddRangeAsync(entities);
 
             if (andSave)
@@ -124,19 +136,21 @@ namespace BergerFlowTrading.DataTier.Repository
 
 
 
-        public virtual async Task<bool> Update(DTO dto)
+        public virtual async Task<bool> Update(DTO dto, string userId)
         {
-            return await this.Update(dto, true);
+            return await this.Update(dto, userId, true);
         }
 
-        protected virtual async Task<bool> Update(DTO dto, bool andSave = true)
+        protected virtual async Task<bool> Update(DTO dto, string userId, bool andSave = true)
         {
             TEntity entity = mapper.Map<DTO, TEntity>(dto);
-            return await this.Update(entity, andSave);
+            return await this.Update(entity, userId, andSave);
         }
 
-        protected virtual async Task<bool> Update(TEntity entity, bool andSave = true)
+        protected virtual async Task<bool> Update(TEntity entity, string userId, bool andSave = true)
         {
+            entity.UpdatedBy = userId;
+            entity.UpdatedTimeStamp = DateTime.UtcNow;
             this.ctxt.Entry<TEntity>(entity).State = EntityState.Modified;
 
             if (andSave)
@@ -148,21 +162,23 @@ namespace BergerFlowTrading.DataTier.Repository
         }
 
 
-        public virtual async Task<bool> Update(IEnumerable<DTO> dtos)
+        public virtual async Task<bool> Update(IEnumerable<DTO> dtos, string userId)
         {
-            return await this.Update(dtos, true);
+            return await this.Update(dtos, userId, true);
         }
 
-        protected virtual async Task<bool> Update(IEnumerable<DTO> dtos, bool andSave = true)
+        protected virtual async Task<bool> Update(IEnumerable<DTO> dtos, string userId, bool andSave = true)
         {
             IEnumerable<TEntity> entities = mapper.Map< IEnumerable<DTO>, IEnumerable<TEntity>>(dtos);
-            return await this.Update(entities, andSave);
+            return await this.Update(entities, userId, andSave);
         }
 
-        protected virtual async Task<bool> Update(IEnumerable<TEntity> entities, bool andSave = true)
+        protected virtual async Task<bool> Update(IEnumerable<TEntity> entities, string userId, bool andSave = true)
         {
             foreach(TEntity entity in entities)
             {
+                entity.UpdatedBy = userId;
+                entity.UpdatedTimeStamp = DateTime.UtcNow;
                 this.ctxt.Entry<TEntity>(entity).State = EntityState.Modified;
             }
 

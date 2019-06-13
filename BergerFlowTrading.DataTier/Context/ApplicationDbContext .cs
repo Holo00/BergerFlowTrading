@@ -1,5 +1,6 @@
 ﻿using BergerFlowTrading.Model;
 using BergerFlowTrading.Model.Identity;
+using BergerFlowTrading.Model.Logs;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -33,5 +34,13 @@ namespace BergerFlowTrading.DataTier.Context
         public virtual DbSet<ExchangeCustomSettings> ExchangeCustomSettings { get; set; }
         public virtual DbSet<UserExchangeSecret> UserExchangeSecrets { get; set; }
         public virtual DbSet<LimitArbitrageStrategy4Settings> LimitArbitrageStrategy4Settings { get; set; }
+
+
+        //Logs
+        public virtual DbSet<PlatformJob> PlatformJob { get; set; }
+        public virtual DbSet<PlatformLogs> PlatformLogs { get; set; }
+        public virtual DbSet<StrategyRuns> StrategyRuns { get; set; }
+        public virtual DbSet<StrategyLog> StrategyLog { get; set; }
+        public virtual DbSet<ExchangeLogs> ExchangeLogs { get; set; }
     }
 }

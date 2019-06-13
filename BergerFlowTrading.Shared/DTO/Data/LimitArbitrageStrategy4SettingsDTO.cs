@@ -22,6 +22,7 @@ namespace BergerFlowTrading.Shared.DTO.Data
         public decimal Max_Price { get; set; }
         public decimal BaseCurrency_Share_Percentage { get; set; }
         public string StrategyName { get; set; }
+        public StrategyType StrategyType { get; set; }
     }
 
     public enum ValueCurrency
