@@ -39,26 +39,26 @@ namespace BergerFlowTrading.Worker
                 .ConfigureServices((hostContext, services) =>
                 {
                     // Auto Mapper Configurations
-                    var mappingConfig = new MapperConfiguration(mc =>
-                    {
-                        mc.AddProfile(new DataMapper());
-                    });
+                    //var mappingConfig = new MapperConfiguration(mc =>
+                    //{
+                    //    mc.AddProfile(new DataMapper());
+                    //});
 
-                    IMapper mapper = mappingConfig.CreateMapper();
-                    services.AddSingleton(mapper);
+                    //IMapper mapper = mappingConfig.CreateMapper();
+                    //services.AddSingleton(mapper);
 
-                    services.AddDbContext<ApplicationDbContext>(options =>
-                      options.UseSqlServer(hostContext.Configuration.GetConnectionString("DefaultConnection"),
-                      b => b.MigrationsAssembly("BergerFlowTrading.DataTier")), 
-                      ServiceLifetime.Singleton);
+                    //services.AddDbContext<ApplicationDbContext>(options =>
+                    //  options.UseSqlServer(hostContext.Configuration.GetConnectionString("DefaultConnection"),
+                    //  b => b.MigrationsAssembly("BergerFlowTrading.DataTier")), 
+                    //  ServiceLifetime.Singleton);
 
-                    services.AddSingleton<ILoggingService, LoggingService>();
-                    services.AddSingleton<LimitStrategy4SettingsRepository>();
-                    services.AddSingleton<UserExchangeSecretRepository>();
-                    services.AddSingleton<ExchangeFactory>();
-                    services.AddSingleton<StrategyFactory>();
-                    services.AddSingleton<StrategySettingsFactory>();
-                    services.AddSingleton<TradingPlatform>();
+                    //services.AddSingleton<ILoggingService, LoggingService>();
+                    //services.AddSingleton<LimitStrategy4SettingsRepository>();
+                    //services.AddSingleton<UserExchangeSecretRepository>();
+                    //services.AddSingleton<ExchangeFactory>();
+                    //services.AddSingleton<StrategyFactory>();
+                    //services.AddSingleton<StrategySettingsFactory>();
+                    //services.AddSingleton<TradingPlatform>();
                     services.AddHostedService<Worker>();
 
                 });

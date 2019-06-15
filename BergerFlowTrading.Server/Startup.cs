@@ -24,6 +24,11 @@ using BergerFlowTrading.DataTier.Repository;
 using BergerFlowTrading.BusinessTier.Services.Logging;
 using BergerFlowTrading.BusinessTier.Services.Encryption;
 using BergerFlowTrading.Shared.Encryption;
+using BergerFlowTrading.BusinessTier.BackgroundService;
+using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spot;
+using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy;
+using BergerFlowTrading.Server.SignalR;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace BergerFlowTrading.Server
 {
@@ -89,7 +94,7 @@ namespace BergerFlowTrading.Server
                     .AddDefaultTokenProviders();
 
             services.AddSingleton<StringCipher>();
-            services.AddSingleton<ILoggingService, LoggingService>();
+            services.AddScoped<ILoggingService, LoggingService>();
 
             services.AddScoped<ExchangeRepository>();
             services.AddScoped<LimitStrategy4SettingsRepository>();
@@ -102,7 +107,11 @@ namespace BergerFlowTrading.Server
             services.AddScoped<SignInManager<AppUser>>();
             services.AddScoped<IdentityService>();
 
+            services.AddScoped<ExchangeFactory>();
+            services.AddScoped<StrategyFactory>();
+            services.AddScoped<StrategySettingsFactory>();
 
+            services.AddSingleton<TradingJobServiceFactory>();
 
             // ===== Add Jwt Authentication ========
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
@@ -125,6 +134,28 @@ namespace BergerFlowTrading.Server
                     ValidateIssuer = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT_Auth:JwtKey"]))
                 };
+
+                //// We have to hook the OnMessageReceived event in order to
+                //// allow the JWT authentication handler to read the access
+                //// token from the query string when a WebSocket or 
+                //// Server-Sent Events request comes in.
+                //o.Events = new JwtBearerEvents
+                //{
+                //    OnMessageReceived = context =>
+                //    {
+                //        var accessToken = context.Request.Query["access_token"];
+
+                //        // If the request is for our hub...
+                //        var path = context.HttpContext.Request.Path;
+                //        if (!string.IsNullOrEmpty(accessToken) &&
+                //            (path.StartsWithSegments("/TradingPlatformHub")))
+                //        {
+                //            // Read the token out of the query string
+                //            context.Token = accessToken;
+                //        }
+                //        return Task.CompletedTask;
+                //    }
+                //};
             });
 
 
@@ -134,6 +165,8 @@ namespace BergerFlowTrading.Server
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                     new[] { "application/octet-stream" });
             });
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -149,11 +182,8 @@ namespace BergerFlowTrading.Server
                 app.UseDeveloperExceptionPage();
                 app.UseBlazorDebugging();
             }
-            else
-            {
-                app.UseHttpsRedirection();
-            }
 
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -163,6 +193,22 @@ namespace BergerFlowTrading.Server
             });
 
             app.UseBlazor<Client.Startup>();
+
+            app.UseSignalR(route =>
+            {
+                route.MapHub<TradingPlatformHub>("/TradingPlatformHub");
+            });
+
+            //var hub = new HubConnectionBuilder()
+            //.WithUrl($"https://localhost:44395/TradingPlatformHub"
+            ////,options =>
+            ////{
+            ////    options.AccessTokenProvider = () => Task.FromResult(token);
+            ////}
+            //)
+            //.Build();
+
+
         }
 
 

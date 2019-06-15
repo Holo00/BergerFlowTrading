@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BergerFlowTrading.Model.Logs
 {
-    public class PlatformJob: BaseModel
+    public class PlatformJob: AsUserModel
     {
         [Required]
         public DateTime StartTime { get; set; }

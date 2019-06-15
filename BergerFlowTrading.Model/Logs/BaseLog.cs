@@ -8,6 +8,11 @@ namespace BergerFlowTrading.Model.Logs
 {
     public abstract class BaseLog : BaseModel
     {
+        public BaseLog()
+        {
+
+        }
+
         [Required]
         public DateTime Timestamp { get; set; }
 

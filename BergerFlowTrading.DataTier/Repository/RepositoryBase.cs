@@ -76,15 +76,16 @@ namespace BergerFlowTrading.DataTier.Repository
         }
       
 
-        public virtual async Task<bool> Insert(DTO dto, string userId)
+        public virtual async Task<DTO> Insert(DTO dto, string userId)
         {
             return await this.Insert(dto, userId, true);
         }
 
-        protected virtual async Task<bool> Insert(DTO dto, string userId, bool andSave = true)
+        protected virtual async Task<DTO> Insert(DTO dto, string userId, bool andSave = true)
         {
             TEntity entity = mapper.Map<DTO, TEntity>(dto);
-            return await this.Insert(entity, userId, andSave);
+            await this.Insert(entity, userId, andSave);
+            return mapper.Map<TEntity, DTO>(entity);
         }
 
         protected virtual async Task<bool> Insert(TEntity entity, string userId, bool andSave = true)
@@ -103,15 +104,16 @@ namespace BergerFlowTrading.DataTier.Repository
             return true;
         }
 
-        public virtual async Task<bool> Insert(IEnumerable<DTO> dtos, string userId)
+        public virtual async Task<List<DTO>> Insert(IEnumerable<DTO> dtos, string userId)
         {
             return await this.Insert(dtos, userId, true);
         }
 
-        protected virtual async Task<bool> Insert(IEnumerable<DTO> dtos, string userId, bool andSave = true)
+        protected virtual async Task<List<DTO>> Insert(IEnumerable<DTO> dtos, string userId, bool andSave = true)
         {
             IEnumerable<TEntity> entities = mapper.Map<IEnumerable<DTO>, IEnumerable<TEntity>>(dtos);
-            return await this.Insert(entities, userId, andSave);
+            await this.Insert(entities, userId, andSave);
+            return mapper.Map<IEnumerable<TEntity>, IEnumerable<DTO>>(entities).ToList();
         }
 
         protected virtual async Task<bool> Insert(IEnumerable<TEntity> entities, string userId, bool andSave = true)

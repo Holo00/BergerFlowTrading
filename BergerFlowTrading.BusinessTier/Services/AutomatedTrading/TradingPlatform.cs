@@ -1,7 +1,9 @@
 ﻿using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spot;
 using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy;
 using BergerFlowTrading.BusinessTier.Services.Logging;
+using BergerFlowTrading.DataTier.Repository.Logs;
 using BergerFlowTrading.Shared.DTO.Data;
+using BergerFlowTrading.Shared.DTO.Data.Logs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,31 +16,53 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
     {
         private readonly StrategySettingsFactory settingsFactory;
         private readonly StrategyFactory strategyFactory;
+        private readonly PlatformJobsRepository jobRepo;
 
-        private readonly ILoggingService logger;
+        private string userId { get; set; }
+
+        private CancellationToken stoppingToken { get; set; }
+
+        private PlatformJobsDTO platformJob { get; set; }
+
+        private PlatformLogService PlatformLogService { get; set; }
 
         public Dictionary<string, CancellationTokenSource> strategyTokens { get; private set; }
 
-        private Dictionary<string, SemaphoreSlim> currencySemaphores;
+        private Dictionary<string, SemaphoreSlim> currencySemaphosres;
         private SemaphoreSlim concurrentSemaphore;
 
         private List<IStrategy> strategies { get; set; }
-
+        public bool Started { get; internal set; }
 
         public TradingPlatform(StrategySettingsFactory settingsFactory
                                 , StrategyFactory strategyFactory
-                                , ILoggingService logger
-
-
+                                , PlatformJobsRepository jobRepo
             )
         {
             this.settingsFactory = settingsFactory;
             this.strategyFactory = strategyFactory;
+            this.jobRepo = jobRepo;
             this.strategyTokens = new Dictionary<string, CancellationTokenSource>();
+
+            this.userId = userId;
 
 
             this.strategies = new List<IStrategy>();
         }
+
+        public async Task StartPlatformJob(CancellationToken stoppingToken, string userId)
+        {
+            this.stoppingToken = stoppingToken;
+            PlatformJobsDTO platformJob = await this.jobRepo.Insert(new PlatformJobsDTO() { StartTime = DateTime.UtcNow }, userId);
+            await this.PlatformLogService.Log(userId, "Starting Platform Job...", eventType.Info);
+            await this.RunStrategies();
+        }
+
+        public Task StopPlatformJob()
+        {
+            throw new NotImplementedException();
+        }
+
 
 
         public async Task<bool> RunStrategies()
@@ -99,7 +123,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
 
             foreach (IStrategySettingDTO s in newStrategies)
             {
-                IStrategy strat = strategyFactory.CreateStrategy(s, ref this.currencySemaphores, ref this.concurrentSemaphore);
+                IStrategy strat = strategyFactory.CreateStrategy(s, ref this.currencySemaphosres, ref this.concurrentSemaphore);
 
                 if(strat != null)
                 {

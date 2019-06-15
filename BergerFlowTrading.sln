@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BergerFlowTrading.DataTier"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BergerFlowTrading.Model", "BergerFlowTrading.Model\BergerFlowTrading.Model.csproj", "{497C382B-347A-41B2-960C-52723F0412E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BergerFlowTrading.Worker", "BergerFlowTrading.Worker\BergerFlowTrading.Worker.csproj", "{C01D29B2-F34D-48FA-9ACB-309134C1B83C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BergerFlowTrading.Worker", "BergerFlowTrading.Worker\BergerFlowTrading.Worker.csproj", "{C01D29B2-F34D-48FA-9ACB-309134C1B83C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

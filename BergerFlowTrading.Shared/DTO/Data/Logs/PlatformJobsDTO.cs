@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BergerFlowTrading.Shared.DTO.Data.Logs
 {
-    public class PlatformJobsDTO: DataDTOBase
+    public class PlatformJobsDTO: UserDataDTO
     {
         [Required]
         public DateTime StartTime { get; set; }

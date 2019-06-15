@@ -1,0 +1,46 @@
+﻿@using BergerFlowTrading.Shared.DTO.Data
+@using BergerFlowTrading.Shared.HttpUnitOfWork
+@using BergerFlowTrading.Shared.DTO.Data.Logs;
+
+@page "/PlatformJobsLogsHistory"
+
+@inject HttpUnitOfWork uow
+@*<div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <form>
+                    <div class="form-group">
+                        <label for="JobsDateStart" class="control-label"></label>
+                        <input for="JobsDateStart" type="date" class="form-control" bind="@jobSearchStartDate" />
+                    </div>
+                    <div class="form-group">
+                        <label for="JobsDateEnd" class="control-label"></label>
+                        <input for="JobsDateEnd" type="date" class="form-control" bind="@jobSearchEndDate" />
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm">
+                <form>
+                    <div class="form-group">
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>*@
+
+
+@functions {
+    DateTime jobSearchStartDate;
+    DateTime jobSearchEndDate;
+
+    List<PlatformJobsDTO> jobs;
+
+    protected override async Task OnInitAsync()
+    {
+        jobSearchStartDate = DateTime.Now.Date;
+        jobSearchStartDate = DateTime.Now.Date.AddDays(-1);
+        //jobs =
+
+    }
+}

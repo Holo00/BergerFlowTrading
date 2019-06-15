@@ -1,0 +1,91 @@
+﻿@using BergerFlowTrading.Shared.DTO.Data
+@using BergerFlowTrading.Shared.HttpUnitOfWork
+@using BergerFlowTrading.Shared.DTO.Data.Logs;
+@using Microsoft.AspNetCore.SignalR.Client;
+@using Microsoft.Extensions.Configuration;
+
+@page "/PlatformJobAdmin"
+
+@inject IConfiguration configuration
+@inject HttpUnitOfWork uow
+@inject HubConnectionBuilder hubConnectionBuilder
+
+<div class="container">
+    <div class="row">
+        <h1>Test</h1>
+        <div class="col-sm">
+        </div>
+        <div class="col-sm">
+        </div>
+    </div>
+</div>
+
+
+@functions {
+    PlatformJobsDTO job;
+    HubConnection hub;
+
+    bool IsJobRunning;
+
+
+    protected override async Task OnInitAsync()
+    {
+        //string token = (await uow.IdenitytService.GetUserState()).Token;
+        //Console.WriteLine($"{this.configuration["Client:ServerUrl"]}/TradingPlatformHub");
+        //hub = hubConnectionBuilder
+        //.WithUrl($"{this.configuration["Client:ServerUrl"]}/TradingPlatformHub"
+        //, options =>
+        //{
+        //    options.AccessTokenProvider  = async() =>
+        //    {
+        //        return (await uow.IdenitytService.GetUserState()).Token;
+        //    };
+        //}
+        //)
+        //.Build();
+
+        //Console.WriteLine("HUB BUILD");
+
+        //hub.Closed += async (error) =>
+        //{
+        //    Console.WriteLine("Connection closed");
+        //    await Task.Delay(new Random().Next(0, 5) * 1000);
+        //    Console.WriteLine("Try Start Connection");
+        //    await hub.StartAsync();
+        //    Console.WriteLine("Connection started");
+        //};
+        //Console.WriteLine("3");
+
+    }
+
+    private async void Connect()
+    {
+        hub.On<bool>("IsPlatformJobRunning_Result", result =>
+        {
+            this.IsJobRunning = result;
+            Console.WriteLine($"IsPlatformJobRunning_Result, {result}");
+        });
+
+        try
+        {
+            await hub.StartAsync();
+            Console.WriteLine("Connection started");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    public async void Send_IsPlatformJobRunning()
+    {
+        try
+        {
+            await hub.InvokeAsync("IsPlatformJobRunning");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
