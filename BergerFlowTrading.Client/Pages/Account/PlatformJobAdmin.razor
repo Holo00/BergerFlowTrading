@@ -1,14 +1,17 @@
 ﻿@using BergerFlowTrading.Shared.DTO.Data
 @using BergerFlowTrading.Shared.HttpUnitOfWork
 @using BergerFlowTrading.Shared.DTO.Data.Logs;
-@using Microsoft.AspNetCore.SignalR.Client;
 @using Microsoft.Extensions.Configuration;
+
+@namespace BergerFlowTrading.Client.Pages.Account
 
 @page "/PlatformJobAdmin"
 
 @inject IConfiguration configuration
 @inject HttpUnitOfWork uow
-@inject HubConnectionBuilder hubConnectionBuilder
+@*@inject HubConnectionBuilder hubConnectionBuilder*@
+
+@attribute [Authorize(Roles = "BasicPlan")]
 
 <div class="container">
     <div class="row">
@@ -21,9 +24,9 @@
 </div>
 
 
-@functions {
+@code {
     PlatformJobsDTO job;
-    HubConnection hub;
+    //HubConnection hub;
 
     bool IsJobRunning;
 
@@ -60,28 +63,28 @@
 
     private async void Connect()
     {
-        hub.On<bool>("IsPlatformJobRunning_Result", result =>
-        {
-            this.IsJobRunning = result;
-            Console.WriteLine($"IsPlatformJobRunning_Result, {result}");
-        });
+        //hub.On<bool>("IsPlatformJobRunning_Result", result =>
+        //{
+        //    this.IsJobRunning = result;
+        //    Console.WriteLine($"IsPlatformJobRunning_Result, {result}");
+        //});
 
-        try
-        {
-            await hub.StartAsync();
-            Console.WriteLine("Connection started");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        //try
+        //{
+        //    await hub.StartAsync();
+        //    Console.WriteLine("Connection started");
+        //}
+        //catch (Exception ex)
+        //{
+        //    Console.WriteLine(ex.Message);
+        //}
     }
 
     public async void Send_IsPlatformJobRunning()
     {
         try
         {
-            await hub.InvokeAsync("IsPlatformJobRunning");
+            //await hub.InvokeAsync("IsPlatformJobRunning");
         }
         catch (Exception ex)
         {

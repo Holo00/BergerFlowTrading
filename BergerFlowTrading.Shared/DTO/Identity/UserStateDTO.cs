@@ -7,13 +7,16 @@ namespace BergerFlowTrading.Shared.DTO.Identity
     public class UserStateDTO
     {
 
-        public UserStateDTO(string token, string userName, string email, List<string> roles = null)
+        public UserStateDTO(string token, string userName, string email, bool IsAuthenticated, List<string> roles = null)
         {
             Token = token;
             UserName = userName;
             Email = email;
             Roles = roles;
+            this.IsAuthenticated = IsAuthenticated;
         }
+
+        public bool IsAuthenticated { get; set; }
 
         public string Token { get; private set; }
 

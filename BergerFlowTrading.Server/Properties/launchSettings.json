@@ -2,13 +2,9 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
-    "iis": {
-      "applicationUrl": "http://localhost/BergerFlowTrading.Server",
-      "sslPort": 0
-    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:56263/",
-      "sslPort": 44395
+      "applicationUrl": "http://localhost:51178/",
+      "sslPort": 44348
     }
   },
   "profiles": {
@@ -25,7 +21,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:56264/"
+      "applicationUrl": "http://localhost:51181/"
     }
   }
 }

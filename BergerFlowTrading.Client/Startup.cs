@@ -4,10 +4,10 @@ using BergerFlowTrading.Shared.HttpUnitOfWork;
 using BergerFlowTrading.Shared.HttpUnitOfWork.Identity;
 using BergerFlowTrading.Shared.HttpUnitOfWork.Repository;
 using BergerFlowTrading.Shared.Storage;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Configuration;
+//using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BergerFlowTrading.Client
@@ -30,7 +30,11 @@ namespace BergerFlowTrading.Client
             services.AddSingleton<HttpLimitArbitrageStrategy4SettingsRepository>();
             services.AddSingleton<HttpUnitOfWork>();
 
-            services.AddTransient<HubConnectionBuilder>();
+            //services.AddTransient<HubConnectionBuilder>();
+
+            // Add auth services
+            services.AddAuthorizationCore();
+            services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

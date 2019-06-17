@@ -58,7 +58,7 @@ namespace BergerFlowTrading.Server.Controllers
                 {
                     var appUser = idService.Users.SingleOrDefault(r => r.Email == dto.Email);
                     var token = await idService.GenerateJwtToken(dto.Email, appUser);
-                    var rootData = new UserStateDTO(token, appUser.UserName, appUser.Email, idService.GetRoles(token));
+                    var rootData = new UserStateDTO(token, appUser.UserName, appUser.Email, true, idService.GetRoles(token));
 
                     return Ok(rootData);
                 }

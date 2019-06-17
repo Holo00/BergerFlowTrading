@@ -2,9 +2,15 @@
 @using BergerFlowTrading.Shared.HttpUnitOfWork
 @using BergerFlowTrading.Shared.DTO.Data.Logs;
 
+@namespace BergerFlowTrading.Client.Pages.Admin
+
+
 @page "/PlatformJobsLogsHistory"
 
 @inject HttpUnitOfWork uow
+
+@attribute [Authorize(Roles = "Admin")]
+
 @*<div class="container">
         <div class="row">
             <div class="col-sm">
@@ -30,7 +36,7 @@
     </div>*@
 
 
-@functions {
+@code {
     DateTime jobSearchStartDate;
     DateTime jobSearchEndDate;
 

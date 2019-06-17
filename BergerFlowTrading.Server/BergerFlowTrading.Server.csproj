@@ -2,26 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RestoreAdditionalProjectSources>
-      https://dotnet.myget.org/F/aspnetcore-dev/api/v3/index.json;
-      https://dotnet.myget.org/F/blazor-dev/api/v3/index.json;
-    </RestoreAdditionalProjectSources>
     <LangVersion>7.3</LangVersion>
-    <UserSecretsId>f182306d-e8c4-4894-bab6-332a4acfaa31</UserSecretsId>
+    <UserSecretsId>74af59ce-845f-4c6f-a1fa-14c854acba9c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.0.0-preview5-19227-01" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview5-19227-01" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.0.0-preview6.19307.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview6.19307.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BergerFlowTrading.BusinessTier\BergerFlowTrading.BusinessTier.csproj" />
     <ProjectReference Include="..\BergerFlowTrading.Client\BergerFlowTrading.Client.csproj" />
-    <ProjectReference Include="..\BergerFlowTrading.DataTier\BergerFlowTrading.DataTier.csproj" />
-    <ProjectReference Include="..\BergerFlowTrading.Model\BergerFlowTrading.Model.csproj" />
     <ProjectReference Include="..\BergerFlowTrading.Shared\BergerFlowTrading.Shared.csproj" />
   </ItemGroup>
 

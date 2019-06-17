@@ -6,11 +6,13 @@
 
 @inject HttpUnitOfWork uow
 
+@attribute [Authorize(Roles = "BasicPlan")]
+
 <h1>Limit Arbitrage 4 Management</h1>
 <br />
 <div>
     <div style="float:left">
-        <button class="btn btn-primary" onclick="@AddState">Add Setting</button>
+        <button class="btn btn-primary" @onclick="@AddState">Add Setting</button>
     </div>
 </div>
 <br />
@@ -33,37 +35,37 @@ else
         <tbody>
             @foreach (var sss in settings)
             {
-            <tr>
-                @*<td><input type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" bind="sss.Active" onchange="@(async () => await ChangeActive(sss.ID))" /></td>
-                <td><input type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" bind="sss.ManagementBalanceON" onchange="@(async () => await ChangeBalanceOn(sss.ID))" /></td>*@
-                <td>
-                    @if (sss.Active)
-                    {
-                        <button class="btn btn-success" onclick="@(async () => await ChangeActive(sss.ID))">Active</button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-light" onclick="@(async () => await ChangeActive(sss.ID))">Active</button>
-                    }
-                </td>
-                <td>
-                    @if (sss.ManagementBalanceON)
-                    {
-                        <button class="btn btn-success" onclick="@(async () => await ChangeBalanceOn(sss.ID))">Manage Balance</button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-light" onclick="@(async () => await ChangeBalanceOn(sss.ID))">Manage Balance</button>
-                    }
-                </td>
-                <td>@sss.Symbol</td>
-                <td>@sss.Exchange_1.Name</td>
-                <td>@sss.Exchange_2.Name</td>
-                <td>
-                    <button class="btn btn-info" onclick="@(async () => await EditState(sss.ID))">Edit</button>
-                    <button class="btn btn-danger" onclick="@(async () => await DeleteState(sss.ID))">Delete</button>
-                </td>
-            </tr>
+                <tr>
+                    @*<td><input type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" bind="sss.Active" onchange="@(async () => await ChangeActive(sss.ID))" /></td>
+                        <td><input type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" bind="sss.ManagementBalanceON" onchange="@(async () => await ChangeBalanceOn(sss.ID))" /></td>*@
+                    <td>
+                        @if (sss.Active)
+                        {
+                            <button class="btn btn-success" @onclick="@(async () => await ChangeActive(sss.ID))">Active</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-light" @onclick="@(async () => await ChangeActive(sss.ID))">Active</button>
+                        }
+                    </td>
+                    <td>
+                        @if (sss.ManagementBalanceON)
+                        {
+                            <button class="btn btn-success" @onclick="@(async () => await ChangeBalanceOn(sss.ID))">Manage Balance</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-light" @onclick="@(async () => await ChangeBalanceOn(sss.ID))">Manage Balance</button>
+                        }
+                    </td>
+                    <td>@sss.Symbol</td>
+                    <td>@sss.Exchange_1.Name</td>
+                    <td>@sss.Exchange_2.Name</td>
+                    <td>
+                        <button class="btn btn-info" @onclick="@(async () => await EditState(sss.ID))">Edit</button>
+                        <button class="btn btn-danger" @onclick="@(async () => await DeleteState(sss.ID))">Delete</button>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -74,7 +76,7 @@ else
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 class="modal-title">@modalTitle</h3>
-                        <button type="button" class="close" onclick="@closeModal">
+                        <button type="button" class="close" @onclick="@closeModal">
                             <span aria-hidden="true">X</span>
                         </button>
                     </div>
@@ -82,11 +84,11 @@ else
                         <form>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Symbol</label>
-                                <input for="Name" class="form-control" bind="@setting.Symbol" />
+                                <input for="Name" class="form-control" @bind="@setting.Symbol" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Exchange 1</label>
-                                <select bind="@setting.Exchange_ID_1">
+                                <select @bind="@setting.Exchange_ID_1">
                                     <option></option>
                                     @foreach (var exx in exchanges)
                                     {
@@ -96,7 +98,7 @@ else
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Exchange 2</label>
-                                <select bind="@setting.Exchange_ID_2">
+                                <select @bind="@setting.Exchange_ID_2">
                                     <option></option>
                                     @foreach (var exx in exchanges)
                                     {
@@ -106,11 +108,11 @@ else
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Minimum ATR Value</label>
-                                <input for="Name" class="form-control" bind="@setting.MinATRValue" />
+                                <input for="Name" class="form-control" @bind="@setting.MinATRValue" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Value Currency</label>
-                                <select bind="@setting.Value_Currency">
+                                <select @bind="@setting.Value_Currency">
                                     <option></option>
                                     @foreach (var val in (ValueCurrency[])Enum.GetValues(typeof(ValueCurrency)))
                                     {
@@ -120,28 +122,28 @@ else
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Min Value To Hold</label>
-                                <input for="Name" class="form-control" bind="@setting.Value_To_Trade_Min" />
+                                <input for="Name" class="form-control" @bind="@setting.Value_To_Trade_Min" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Max Value To Hold</label>
-                                <input for="Name" class="form-control" bind="@setting.Value_To_Trade_Max" />
+                                <input for="Name" class="form-control" @bind="@setting.Value_To_Trade_Max" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Min Price</label>
-                                <input for="Name" class="form-control" bind="@setting.Max_Price" />
+                                <input for="Name" class="form-control" @bind="@setting.Max_Price" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Max Price</label>
-                                <input for="Name" class="form-control" bind="@setting.Max_Price" />
+                                <input for="Name" class="form-control" @bind="@setting.Max_Price" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">BaseCurrency Share Percent</label>
-                                <input for="Name" class="form-control" bind="@setting.BaseCurrency_Share_Percentage" />
+                                <input for="Name" class="form-control" @bind="@setting.BaseCurrency_Share_Percentage" />
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-block btn-success" onclick="@(async () => await Save())" data-dismiss="modal">Save</button>
+                        <button class="btn btn-block btn-success" @onclick="@(async () => await Save())" data-dismiss="modal">Save</button>
                     </div>
                 </div>
             </div>
@@ -173,8 +175,8 @@ else
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-danger" onclick="@(async () => await Delete(setting.ID))" data-dismiss="modal">YES</button>
-                        <button class="btn btn-warning" onclick="@closeModal">NO</button>
+                        <button class="btn btn-danger" @onclick="@(async () => await Delete(setting.ID))" data-dismiss="modal">YES</button>
+                        <button class="btn btn-warning" @onclick="@closeModal">NO</button>
                     </div>
                 </div>
             </div>
@@ -182,7 +184,7 @@ else
     }
 }
 
-@functions {
+@code {
     List<ExchangeDTO> exchanges;
     List<LimitArbitrageStrategy4SettingsDTO> settings;
     LimitArbitrageStrategy4SettingsDTO setting;

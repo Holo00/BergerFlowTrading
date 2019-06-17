@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BergerFlowTrading.Shared;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BergerFlowTrading.Shared;
 
-namespace WebApplication7.Server.Controllers
+namespace BergerFlowTrading.Server.Controllers
 {
     [Route("api/[controller]")]
     public class SampleDataController : Controller

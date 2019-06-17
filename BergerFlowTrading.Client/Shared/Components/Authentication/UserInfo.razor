@@ -1,111 +1,168 @@
-﻿@using BergerFlowTrading.Shared.DTO.Identity
+@using BergerFlowTrading.Shared.DTO.Identity
+@using BergerFlowTrading.Shared.HttpUnitOfWork
+
+@namespace BergerFlowTrading.Client.Shared.Components.Authentication
+
+@inject HttpUnitOfWork uow
+@inject AuthenticationStateProvider authz
 
 <div class="user-info">
-    @if (UserState.UserStateMode == UserStateMode.Init)
-    {
-        <text>...</text>
-    }
-    else if (UserState.UserStateMode == UserStateMode.SignedIn)
-    {
-        <div>
-            <span class="username">@UserState.CurrentUser.UserName</span>
-            <span class="sign-out" onclick="@UserState.SignOut">Sign out</span>
-        </div>
-    }
-    else if (UserState.UserStateMode == UserStateMode.SignInInProgress)
-    {
-        <div class="modal" tabindex="-1" style="display:block" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Sign In</h3>
-                        <button type="button" class="close" onclick="@Cancel">
-                            <span aria-hidden="true">X</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="Name" class="control-label">Email</label>
-                                <input for="Name" class="form-control" bind="@dtoLogin.Email" />
+    <AuthorizeView>
+        <Authorizing>
+            <text>...</text>
+        </Authorizing>
+        <Authorized>
+            <div>
+                <span class="username">@(CurrentUser != null ? CurrentUser.UserName : "")</span>
+                <button class="sign-out" @onclick="@SignOut">Sign out</button>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            @if (UserState == UserStateMode.SignInInProgress)
+            {
+                <div class="modal" tabindex="-1" style="display:block" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">Sign In</h3>
+                                <button type="button" class="close" @onclick="@Cancel">
+                                    <span aria-hidden="true">X</span>
+                                </button>
                             </div>
-                            <div class="form-group">
-                                <label for="Name" class="control-label">Password</label>
-                                <input for="Name" class="form-control" bind="@dtoLogin.Password" />
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="Name" class="control-label">Email</label>
+                                        <input for="Name" class="form-control" @bind="@dtoLogin.Email" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Name" class="control-label">Password</label>
+                                        <input for="Name" class="form-control" @bind="@dtoLogin.Password" />
+                                    </div>
+                                </form>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                            <button class="btn btn-block btn-success" onclick="@(async () => await UserState.SignIn(dtoLogin))" data-dismiss="modal">Sign In</button>
-                            <a onclick="@OnIsSignUpMode">Sign Up?</a>
+                            <div class="modal-footer">
+                                <button class="btn btn-block btn-success" @onclick="@(async () => await SignIn(dtoLogin))" data-dismiss="modal">Sign In</button>
+                                <a @onclick="@OnIsSignUpMode">Sign Up?</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    }
-    else if (UserState.UserStateMode == UserStateMode.SignUpInProgress)
-    {
-        <div class="modal" tabindex="-1" style="display:block" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Sign Up</h3>
-                        <button type="button" class="close" onclick="@Cancel">
-                            <span aria-hidden="true">X</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="Name" class="control-label">Email</label>
-                                <input for="Name" class="form-control" bind="@dtoRegister.Email" />
+            }
+            else if (UserState == UserStateMode.SignUpInProgress)
+            {
+                <div class="modal" tabindex="-1" style="display:block" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">Sign Up</h3>
+                                <button type="button" class="close" @onclick="@Cancel">
+                                    <span aria-hidden="true">X</span>
+                                </button>
                             </div>
-                            <div class="form-group">
-                                <label for="Name" class="control-label">Password</label>
-                                <input for="Name" class="form-control" bind="@dtoRegister.Password" />
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="Name" class="control-label">Email</label>
+                                        <input for="Name" class="form-control" @bind="@dtoRegister.Email" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Name" class="control-label">Password</label>
+                                        <input for="Name" class="form-control" @bind="@dtoRegister.Password" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Name" class="control-label">Password</label>
+                                        <input for="Name" class="form-control" @bind="@dtoRegister.ConfirmPassword" />
+                                    </div>
+                                </form>
                             </div>
-                            <div class="form-group">
-                                <label for="Name" class="control-label">Password</label>
-                                <input for="Name" class="form-control" bind="@dtoRegister.ConfirmPassword" />
+                            <div class="modal-footer">
+                                <button class="btn btn-block btn-success" @onclick="@(async () => await SignUp(dtoRegister))" data-dismiss="modal">Sign Up</button>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-block btn-success" onclick="@(async () => await UserState.SignUp(dtoRegister))" data-dismiss="modal">Sign Up</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    }
-    else if (UserState.UserStateMode == UserStateMode.SignedOut)
-    {
-        <button onclick="@OnIsSignInMode" class="sign-in">Sign in</button>
-    }
+            }
+            else
+            {
+                <button @onclick="@OnIsSignInMode" class="sign-in">Sign in</button>
+            }
+        </NotAuthorized>
+    </AuthorizeView>
 </div>
 
-@functions {
-    [CascadingParameter] UserStateProvider UserState { get; set; }
+@code {
+    //[CascadingParameter] UserStateProvider UserState { get; set; }
+
+    public UserStateDTO CurrentUser { get; private set; }
+    UserStateMode UserState = UserStateMode.Init;
 
     private LoginDTO dtoLogin;
     private RegisterDTO dtoRegister;
 
+    protected override async Task OnInitAsync()
+    {
+        await GetUserState();
+    }
+
+    public async Task GetUserState()
+    {
+        var initState = UserState;
+        CurrentUser = await uow.IdenitytService.GetUserState();
+        UserState = CurrentUser != null ? UserStateMode.SignedIn : UserStateMode.SignedOut;
+
+        StateHasChanged();
+    }
+
     private void OnIsSignInMode()
     {
         dtoLogin = new LoginDTO();
-        UserState.UserStateMode = UserStateMode.SignInInProgress;
+        UserState = UserStateMode.SignInInProgress;
         StateHasChanged();
     }
 
     private void OnIsSignUpMode()
     {
         dtoRegister = new RegisterDTO();
-        UserState.UserStateMode = UserStateMode.SignUpInProgress;
+        UserState = UserStateMode.SignUpInProgress;
         StateHasChanged();
     }
 
     private void Cancel()
     {
-        UserState.UserStateMode = UserStateMode.SignedOut;
+        UserState = UserStateMode.SignedOut;
         StateHasChanged();
+    }
+
+    public async Task SignIn(LoginDTO dto)
+    {
+        CurrentUser = await uow.IdenitytService.Login(dto);
+        if (CurrentUser != null)
+        {
+            UserState = UserStateMode.SignedIn;
+            StateHasChanged();
+        }
+    }
+
+    public async Task SignUp(RegisterDTO dto)
+    {
+        bool result = await uow.IdenitytService.Register(dto);
+        if (result)
+        {
+            UserState = UserStateMode.SignInInProgress;
+            StateHasChanged();
+        }
+    }
+
+    public async Task SignOut()
+    {
+        bool result = await uow.IdenitytService.SignOut();
+
+        if (result)
+        {
+            CurrentUser = null;
+            UserState = UserStateMode.SignedOut;
+            StateHasChanged();
+        }
     }
 }

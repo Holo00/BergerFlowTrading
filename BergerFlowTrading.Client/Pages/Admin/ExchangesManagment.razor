@@ -1,16 +1,20 @@
 ﻿@using BergerFlowTrading.Shared.DTO.Data
 @using BergerFlowTrading.Shared.HttpUnitOfWork
 
+@namespace BergerFlowTrading.Client.Pages.Admin
+
 @page "/ExchangesManagment"
 
 @inject HttpUnitOfWork uow
+
+@attribute [Authorize(Roles = "Admin")]
 
 
 <h1>Exchanges Settings</h1>
 <br />
 <div>
     <div style="float:left">
-        <button class="btn btn-primary" onclick="@AddState">Add Exchange</button>
+        <button class="btn btn-primary" @onclick="@AddState">Add Exchange</button>
     </div>
 </div>
 <br />
@@ -37,20 +41,20 @@ else
         <tbody>
             @foreach (var exx in exchanges)
             {
-            <tr>
-                <td>@exx.Name</td>
-                <td>@exx.ApiUrl</td>
-                <td>@exx.WSS_Url</td>
-                <td>@exx.FacadeClassName</td>
-                <td>@exx.ApiTimeoutMilliseconds</td>
-                <td>@exx.DelayBetweenCallMilliseonds</td>
-                <td>@exx.RateLimitIntervalSeconds</td>
-                <td>@exx.RateMaxQuantity</td>
-                <td>
-                    <button class="btn btn-info" onclick="@(async () => await EditState(@exx.ID))">Edit</button>
-                    <button class="btn btn-danger" onclick="@(async () => await DeleteState(@exx.ID))">Delete</button>
-                </td>
-            </tr>
+                <tr>
+                    <td>@exx.Name</td>
+                    <td>@exx.ApiUrl</td>
+                    <td>@exx.WSS_Url</td>
+                    <td>@exx.FacadeClassName</td>
+                    <td>@exx.ApiTimeoutMilliseconds</td>
+                    <td>@exx.DelayBetweenCallMilliseonds</td>
+                    <td>@exx.RateLimitIntervalSeconds</td>
+                    <td>@exx.RateMaxQuantity</td>
+                    <td>
+                        <button class="btn btn-info" @onclick="@(async () => await EditState(@exx.ID))">Edit</button>
+                        <button class="btn btn-danger" @onclick="@(async () => await DeleteState(@exx.ID))">Delete</button>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -61,7 +65,7 @@ else
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 class="modal-title">@modalTitle</h3>
-                        <button type="button" class="close" onclick="@closeModal">
+                        <button type="button" class="close" @onclick="@closeModal">
                             <span aria-hidden="true">X</span>
                         </button>
                     </div>
@@ -69,40 +73,40 @@ else
                         <form>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Name</label>
-                                <input for="Name" class="form-control" bind="@exchange.Name" />
+                                <input for="Name" class="form-control" @bind="@exchange.Name" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Api URL</label>
-                                <input for="Name" class="form-control" bind="@exchange.ApiUrl" />
+                                <input for="Name" class="form-control" @bind="@exchange.ApiUrl" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">WSS URL</label>
-                                <input for="Name" class="form-control" bind="@exchange.WSS_Url" />
+                                <input for="Name" class="form-control" @bind="@exchange.WSS_Url" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Class Name</label>
-                                <input for="Name" class="form-control" bind="@exchange.FacadeClassName" />
+                                <input for="Name" class="form-control" @bind="@exchange.FacadeClassName" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Api Timeout Milliseconds</label>
-                                <input for="Name" class="form-control" bind="@exchange.ApiTimeoutMilliseconds" />
+                                <input for="Name" class="form-control" @bind="@exchange.ApiTimeoutMilliseconds" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Delay Between Calls Milliseconds</label>
-                                <input for="Name" class="form-control" bind="@exchange.DelayBetweenCallMilliseonds" />
+                                <input for="Name" class="form-control" @bind="@exchange.DelayBetweenCallMilliseonds" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Rate Limit Interval Seconds</label>
-                                <input for="Name" class="form-control" bind="@exchange.RateLimitIntervalSeconds" />
+                                <input for="Name" class="form-control" @bind="@exchange.RateLimitIntervalSeconds" />
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="control-label">Rate Max Quantity</label>
-                                <input for="Name" class="form-control" bind="@exchange.RateMaxQuantity" />
+                                <input for="Name" class="form-control" @bind="@exchange.RateMaxQuantity" />
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-block btn-success" onclick="@(async () => await Save())" data-dismiss="modal">Save</button>
+                        <button class="btn btn-block btn-success" @onclick="@(async () => await Save())" data-dismiss="modal">Save</button>
                     </div>
                 </div>
             </div>
@@ -154,8 +158,8 @@ else
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-danger" onclick="@(async () => await Delete(exchange.ID))" data-dismiss="modal">YES</button>
-                        <button class="btn btn-warning" onclick="@closeModal">NO</button>
+                        <button class="btn btn-danger" @onclick="@(async () => await Delete(exchange.ID))" data-dismiss="modal">YES</button>
+                        <button class="btn btn-warning" @onclick="@closeModal">NO</button>
                     </div>
                 </div>
             </div>
@@ -163,7 +167,7 @@ else
     }
 }
 
-@functions {
+@code {
     List<ExchangeDTO> exchanges;
     ExchangeDTO exchange;
 

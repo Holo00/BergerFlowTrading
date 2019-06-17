@@ -1,11 +1,8 @@
 ﻿using BergerFlowTrading.Shared.DTO.Identity;
 using BergerFlowTrading.Shared.Storage;
-using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -19,8 +16,6 @@ namespace BergerFlowTrading.Shared.HttpUnitOfWork.Identity
         private readonly HttpClient http;
         private readonly LogHttpResponse log;
         private readonly LocalStorageService storage;
-
-        private HttpContext currentContext { get; set; }
 
         public IdentityService(IHttpContextAccessor contextAccess, HttpClient http, LogHttpResponse log, LocalStorageService storage)
         {
@@ -44,8 +39,7 @@ namespace BergerFlowTrading.Shared.HttpUnitOfWork.Identity
             try
             {
                 string s = await storage.GetLocalStorageValue<string>("JWT");
-
-                if(!String.IsNullOrEmpty(s))
+                if (!String.IsNullOrEmpty(s))
                 {
                     var user = JsonConvert.DeserializeObject<UserStateDTO>(s);
                     this.http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
@@ -81,6 +75,7 @@ namespace BergerFlowTrading.Shared.HttpUnitOfWork.Identity
         public async Task<bool> SignOut()
         {
             await storage.RemoveLocalStorageValue("JWT");
+            this.http.DefaultRequestHeaders.Authorization = null;
             return true;
         }
 

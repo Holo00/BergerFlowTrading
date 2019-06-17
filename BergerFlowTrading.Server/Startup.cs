@@ -1,34 +1,31 @@
+using AutoMapper;
+using BergerFlowTrading.BusinessTier.BackgroundService;
+using BergerFlowTrading.BusinessTier.Services;
+using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spot;
+using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy;
+using BergerFlowTrading.BusinessTier.Services.Logging;
+using BergerFlowTrading.DataTier.Context;
+using BergerFlowTrading.DataTier.Repository;
 using BergerFlowTrading.Model.Identity;
+using BergerFlowTrading.Model.Mappers;
+using BergerFlowTrading.Server.SignalR;
+using BergerFlowTrading.Shared.Encryption;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
-using BergerFlowTrading.BusinessTier.Services;
-using BergerFlowTrading.DataTier.Context;
-using Microsoft.EntityFrameworkCore;
-using BergerFlowTrading.Model.Mappers;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using BergerFlowTrading.DataTier.Repository;
-using BergerFlowTrading.BusinessTier.Services.Logging;
-using BergerFlowTrading.BusinessTier.Services.Encryption;
-using BergerFlowTrading.Shared.Encryption;
-using BergerFlowTrading.BusinessTier.BackgroundService;
-using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spot;
-using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy;
-using BergerFlowTrading.Server.SignalR;
-using Microsoft.AspNetCore.SignalR.Client;
 
 namespace BergerFlowTrading.Server
 {
@@ -38,7 +35,7 @@ namespace BergerFlowTrading.Server
         private IWebHostEnvironment env { get; }
 
         public Startup(IWebHostEnvironment env)
-        { 
+        {
             this.env = env;
 
             var builder = new ConfigurationBuilder()
@@ -46,12 +43,12 @@ namespace BergerFlowTrading.Server
 
             if (env.IsDevelopment())
             {
-                builder.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                builder.AddJsonFile($"Configuration\\appsettings.{env.EnvironmentName}.json", optional: true);
                 builder.AddUserSecrets<Startup>();
             }
             else
             {
-                builder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                builder.AddJsonFile("Configuration\\appsettings.json", optional: true, reloadOnChange: true);
             }
 
             builder.AddEnvironmentVariables();
@@ -172,16 +169,18 @@ namespace BergerFlowTrading.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            UpdateDatabase(app);
+            //UpdateDatabase(app);
+            //Task.Run(() => CreateUserRoles(app)).Wait();
 
             app.UseResponseCompression();
 
             if (env.IsDevelopment())
             {
-                Task.Run(() => CreateUserRoles(app)).Wait();
                 app.UseDeveloperExceptionPage();
                 app.UseBlazorDebugging();
             }
+
+            app.UseClientSideBlazorFiles<Client.Startup>();
 
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -190,25 +189,9 @@ namespace BergerFlowTrading.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+                endpoints.MapHub<TradingPlatformHub>("/TradingPlatformHub");
             });
-
-            app.UseBlazor<Client.Startup>();
-
-            app.UseSignalR(route =>
-            {
-                route.MapHub<TradingPlatformHub>("/TradingPlatformHub");
-            });
-
-            //var hub = new HubConnectionBuilder()
-            //.WithUrl($"https://localhost:44395/TradingPlatformHub"
-            ////,options =>
-            ////{
-            ////    options.AccessTokenProvider = () => Task.FromResult(token);
-            ////}
-            //)
-            //.Build();
-
-
         }
 
 
