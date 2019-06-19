@@ -1,4 +1,5 @@
 ﻿using BergerFlowTrading.BusinessTier.BackgroundService;
+using BergerFlowTrading.BusinessTier.Services.AutomatedTrading;
 using BergerFlowTrading.BusinessTier.Services.Logging;
 using BergerFlowTrading.DataTier.Repository.Logs;
 using BergerFlowTrading.Shared.DTO.Data.Logs;
@@ -21,6 +22,7 @@ namespace BergerFlowTrading.Server.Controllers
         private readonly StrategyRunsRepository runsRepo;
         private readonly StrategyLogsRepository runsLogRepo;
         private readonly ExchangeLogsRepository exchangeLogsRepo;
+        private readonly TradingPlatform TradingPlatform;
 
         private readonly TradingJobServiceFactory jobsFactory;
 
@@ -32,6 +34,7 @@ namespace BergerFlowTrading.Server.Controllers
                                             , StrategyLogsRepository runsLogRepo
                                             , ExchangeLogsRepository exchangeLogsRepo
                                             , TradingJobServiceFactory jobsFactory
+                                            , TradingPlatform TradingPlatform
                                             , ILoggingService log)
         {
             this.jobRepo = jobRepo;
@@ -41,6 +44,7 @@ namespace BergerFlowTrading.Server.Controllers
             this.exchangeLogsRepo = exchangeLogsRepo;
             this.jobsFactory = jobsFactory;
             this.log = log;
+            this.TradingPlatform = TradingPlatform;
         }
 
 
@@ -81,7 +85,7 @@ namespace BergerFlowTrading.Server.Controllers
 
                 if (!isRunning)
                 {
-                    await this.jobsFactory.StartPlatform(userId);
+                    await this.jobsFactory.StartPlatform(userId, this.TradingPlatform);
                     job = await jobRepo.GetLast(userId);
                     job.IsRunning = true;
                 }
@@ -135,7 +139,7 @@ namespace BergerFlowTrading.Server.Controllers
                 if (isRunning)
                 {
                     var job = await jobRepo.GetLast(userId);
-                    logs = await this.jobLogsRepo.GetByJobID(job.ID.Value, userId, fromLast);
+                    logs = await this.jobLogsRepo.GetByJobID(job.ID, userId, fromLast);
                 }
 
                 return Ok(logs);
@@ -184,7 +188,7 @@ namespace BergerFlowTrading.Server.Controllers
                 if (isRunning)
                 {
                     var job = await jobRepo.GetLast(userId);
-                    logs = await this.exchangeLogsRepo.GetByExchangeID(job.ID.Value, userId, type, filter, fromLast);
+                    logs = await this.exchangeLogsRepo.GetByExchangeID(job.ID, userId, type, filter, fromLast);
                 }
 
                 return Ok(logs);

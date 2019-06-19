@@ -11,17 +11,19 @@ namespace BergerFlowTrading.Model
         [Required]
         public string Name { get; set; }
 
+        [Required]
         public string ApiUrl { get; set; }
-
+        [Required]
         public string WSS_Url { get; set; }
 
         public string FacadeClassName { get; set; }
-
+        [Required]
         public int ApiTimeoutMilliseconds { get; set; }
-
+        [Required]
         public int? DelayBetweenCallMilliseonds { get; set; }
-
+        [Required]
         public int RateMaxQuantity { get; set; }
+        [Required]
         public int RateLimitIntervalSeconds { get; set; }
 
 

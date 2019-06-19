@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BergerFlowTrading.Model.Identity;
+using BergerFlowTrading.Model.Logs;
 using BergerFlowTrading.Shared.DTO.Data;
+using BergerFlowTrading.Shared.DTO.Data.Logs;
 using BergerFlowTrading.Shared.DTO.Identity;
 using System;
 using System.Collections.Generic;
@@ -53,6 +55,29 @@ namespace BergerFlowTrading.Model.Mappers
                 .ForMember(x => x.User, opt => opt.Ignore());
             CreateMap<LimitArbitrageStrategy4SettingsDTO, LimitArbitrageStrategy4Settings>()
                 .ForMember(x => x.User, opt => opt.Ignore());
+
+
+            CreateMap<PlatformJob, PlatformJobsDTO>()
+                .ForMember(x => x.User, opt => opt.Ignore());
+            CreateMap<PlatformJobsDTO, PlatformJob>()
+                .ForMember(x => x.User, opt => opt.Ignore());
+
+            CreateMap<PlatformJob, PlatformJobsDTO>()
+                .ForMember(x => x.User, opt => opt.Ignore());
+            CreateMap<PlatformJobsDTO, PlatformJob>()
+                .ForMember(x => x.User, opt => opt.Ignore());
+
+            CreateMap<PlatformLogs, PlatformLogsDTO>();
+            CreateMap<PlatformLogsDTO, PlatformLogs>();
+
+            CreateMap<StrategyRuns, StrategyRunsDTO>();
+            CreateMap<StrategyRunsDTO, StrategyRuns>();
+
+            CreateMap<StrategyLog, StrategyLogsDTO>();
+            CreateMap<StrategyLogsDTO, StrategyLog>();
+
+            CreateMap<ExchangeLogs, ExchangeLogsDTO>();
+            CreateMap<ExchangeLogsDTO, ExchangeLogs>();
         }
     }
 }

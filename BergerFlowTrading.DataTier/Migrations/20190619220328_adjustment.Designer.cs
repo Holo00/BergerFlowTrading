@@ -4,14 +4,16 @@ using BergerFlowTrading.DataTier.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BergerFlowTrading.DataTier.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190619220328_adjustment")]
+    partial class adjustment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,6 +158,8 @@ namespace BergerFlowTrading.DataTier.Migrations
 
                     b.Property<DateTime>("CreatedTimeStamp");
 
+                    b.Property<int?>("Exchange_2ID");
+
                     b.Property<int>("Exchange_ID_1");
 
                     b.Property<int>("Exchange_ID_2");
@@ -192,9 +196,9 @@ namespace BergerFlowTrading.DataTier.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("Exchange_ID_1");
+                    b.HasIndex("Exchange_2ID");
 
-                    b.HasIndex("Exchange_ID_2");
+                    b.HasIndex("Exchange_ID_1");
 
                     b.HasIndex("User_ID");
 
@@ -564,14 +568,13 @@ namespace BergerFlowTrading.DataTier.Migrations
 
             modelBuilder.Entity("BergerFlowTrading.Model.LimitArbitrageStrategy4Settings", b =>
                 {
+                    b.HasOne("BergerFlowTrading.Model.Exchange", "Exchange_2")
+                        .WithMany("LimitStrategy4Settings2")
+                        .HasForeignKey("Exchange_2ID");
+
                     b.HasOne("BergerFlowTrading.Model.Exchange", "Exchange_1")
                         .WithMany("LimitStrategy4Settings1")
                         .HasForeignKey("Exchange_ID_1")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("BergerFlowTrading.Model.Exchange", "Exchange_2")
-                        .WithMany("LimitStrategy4Settings2")
-                        .HasForeignKey("Exchange_ID_2")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("BergerFlowTrading.Model.Identity.AppUser", "User")

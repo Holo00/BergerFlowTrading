@@ -11,7 +11,7 @@ namespace BergerFlowTrading.Model
     {
         [Required]
         [Key]
-        public virtual int? ID { get; set; }
+        public int ID { get; set; }
 
         [Required]
         public string CreatedBy { get; set; }

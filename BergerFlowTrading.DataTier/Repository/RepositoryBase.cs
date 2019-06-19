@@ -35,7 +35,7 @@ namespace BergerFlowTrading.DataTier.Repository
 
         protected virtual async Task<TEntity> GetById(int id, bool tracking = false)
         {
-            var local = this.Query(x => x.ID.Value == id, this.usualIncludes, tracking).FirstOrDefault();
+            var local = this.Query(x => x.ID == id, this.usualIncludes, tracking).FirstOrDefault();
 
             if (local != null && !tracking)
             {

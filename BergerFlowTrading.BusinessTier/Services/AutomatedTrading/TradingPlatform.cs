@@ -37,11 +37,13 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
         public TradingPlatform(StrategySettingsFactory settingsFactory
                                 , StrategyFactory strategyFactory
                                 , PlatformJobsRepository jobRepo
+                                , PlatformLogService PlatformLogService
             )
         {
             this.settingsFactory = settingsFactory;
             this.strategyFactory = strategyFactory;
             this.jobRepo = jobRepo;
+            this.PlatformLogService = PlatformLogService;
             this.strategyTokens = new Dictionary<string, CancellationTokenSource>();
 
             this.userId = userId;
@@ -54,7 +56,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
         {
             this.stoppingToken = stoppingToken;
             PlatformJobsDTO platformJob = await this.jobRepo.Insert(new PlatformJobsDTO() { StartTime = DateTime.UtcNow }, userId);
-            await this.PlatformLogService.Log(userId, "Starting Platform Job...", eventType.Info);
+            await this.PlatformLogService.Log(platformJob.ID, userId, "Starting Platform Job...", eventType.Info);
             await this.RunStrategies();
         }
 

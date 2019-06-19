@@ -1,24 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace BergerFlowTrading.Shared.DTO.Data
 {
     public class ExchangeDTO : DataDTOBase
     {
+        [Required]
         public string Name { get; set; }
-
+        [Required]
         public string ApiUrl { get; set; }
-
+        [Required]
         public string WSS_Url { get; set; }
-
+        [Required]
         public int ApiTimeoutMilliseconds { get; set; }
-
+        [Required]
         public int? DelayBetweenCallMilliseonds { get; set; }
-
+        [Required]
         public string FacadeClassName { get; set; }
-
+        [Required]
         public int RateMaxQuantity { get; set; }
+        [Required]
         public int RateLimitIntervalSeconds { get; set; }
 
 

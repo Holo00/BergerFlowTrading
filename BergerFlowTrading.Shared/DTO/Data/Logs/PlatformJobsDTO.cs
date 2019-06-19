@@ -10,7 +10,7 @@ namespace BergerFlowTrading.Shared.DTO.Data.Logs
         [Required]
         public DateTime StartTime { get; set; }
 
-        public DateTime StopTime { get; set; }
+        public DateTime? StopTime { get; set; }
 
         public bool IsRunning { get; set; }
 

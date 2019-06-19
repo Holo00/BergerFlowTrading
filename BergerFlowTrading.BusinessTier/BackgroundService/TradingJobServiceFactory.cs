@@ -15,18 +15,18 @@ namespace BergerFlowTrading.BusinessTier.BackgroundService
         public TradingJobServiceFactory(IServiceProvider provider)
         {
             this.provider = provider;
+            this.runningPlatforms = new Dictionary<string, TradingPlatform>();
         }
 
         public bool IsPlatformJobRunning(string userId)
         {
-            return runningPlatforms[userId] != null && runningPlatforms[userId].Started;
+            return runningPlatforms.ContainsKey(userId) && runningPlatforms[userId].Started;
         }
 
-        public async Task<bool> StartPlatform(string userId)
+        public async Task<bool> StartPlatform(string userId, TradingPlatform platform)
         {
             if(!IsPlatformJobRunning(userId))
             {
-                TradingPlatform platform = (TradingPlatform)provider.GetService(typeof(TradingPlatform));
                 runningPlatforms[userId] = platform;
                 CancellationTokenSource token = new CancellationTokenSource();
                 await platform.StartPlatformJob(token.Token, userId);

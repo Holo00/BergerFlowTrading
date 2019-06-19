@@ -207,21 +207,21 @@ else
     }
 
 
-    protected async Task ChangeActive(int? id)
+    protected async Task ChangeActive(int id)
     {
-        await uow.HttpLimitArbitrageStrategy4SettingsRepository.ChangeActive(id.Value);
+        await uow.HttpLimitArbitrageStrategy4SettingsRepository.ChangeActive(id);
         await Load();
     }
 
-    protected async Task ChangeBalanceOn(int? id)
+    protected async Task ChangeBalanceOn(int id)
     {
-        await uow.HttpLimitArbitrageStrategy4SettingsRepository.ChangeBalanceOn(id.Value);
+        await uow.HttpLimitArbitrageStrategy4SettingsRepository.ChangeBalanceOn(id);
         await Load();
     }
 
     protected async Task Save()
     {
-        if (setting.ID == null)
+        if (setting.ID == 0)
         {
             await uow.HttpLimitArbitrageStrategy4SettingsRepository.Create(setting);
         }
@@ -234,11 +234,11 @@ else
         await Load();
     }
 
-    protected async Task Delete(int? id)
+    protected async Task Delete(int id)
     {
-        if (setting.ID != null)
+        if (setting.ID != 0)
         {
-            await uow.HttpLimitArbitrageStrategy4SettingsRepository.Delete(id.Value);
+            await uow.HttpLimitArbitrageStrategy4SettingsRepository.Delete(id);
         }
 
         this.isDelete = false;
@@ -253,16 +253,16 @@ else
         this.isAdd = true;
     }
 
-    protected async Task EditState(int? ID)
+    protected async Task EditState(int ID)
     {
-        setting = await uow.HttpLimitArbitrageStrategy4SettingsRepository.GetById(ID.Value);
+        setting = await uow.HttpLimitArbitrageStrategy4SettingsRepository.GetById(ID);
         this.modalTitle = "Edit Secret";
         this.isAdd = true;
     }
 
-    protected async Task DeleteState(int? ID)
+    protected async Task DeleteState(int ID)
     {
-        setting = await uow.HttpLimitArbitrageStrategy4SettingsRepository.GetById(ID.Value);
+        setting = await uow.HttpLimitArbitrageStrategy4SettingsRepository.GetById(ID);
         this.isDelete = true;
     }
 

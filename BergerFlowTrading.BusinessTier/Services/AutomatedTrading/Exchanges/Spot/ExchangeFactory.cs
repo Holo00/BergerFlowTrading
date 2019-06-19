@@ -32,17 +32,17 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 
             if (exx.Name == ExchangeName.Binance.ToString() && this.exchanges.FirstOrDefault(x => x.ExchangeName == ExchangeName.Binance) != null)
             {
-                UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID.Value);
+                UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID);
                 fac = new BinanceExchange(this.logger, exx, secrets);
             }
             else if (exx.Name == ExchangeName.HitBTC.ToString() && this.exchanges.FirstOrDefault(x => x.ExchangeName == ExchangeName.Binance) != null)
             {
-                UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID.Value);
+                UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID);
                 fac = new HitBTCExchange(this.logger, exx, secrets);
             }
             else if (exx.Name == ExchangeName.KuCoin.ToString() && this.exchanges.FirstOrDefault(x => x.ExchangeName == ExchangeName.Binance) != null)
             {
-                UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID.Value);
+                UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID);
                 fac = new KuCoinExchange(this.logger, exx, secrets);
             }
 

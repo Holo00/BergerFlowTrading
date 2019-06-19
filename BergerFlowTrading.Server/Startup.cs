@@ -1,11 +1,13 @@
 using AutoMapper;
 using BergerFlowTrading.BusinessTier.BackgroundService;
 using BergerFlowTrading.BusinessTier.Services;
+using BergerFlowTrading.BusinessTier.Services.AutomatedTrading;
 using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spot;
 using BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy;
 using BergerFlowTrading.BusinessTier.Services.Logging;
 using BergerFlowTrading.DataTier.Context;
 using BergerFlowTrading.DataTier.Repository;
+using BergerFlowTrading.DataTier.Repository.Logs;
 using BergerFlowTrading.Model.Identity;
 using BergerFlowTrading.Model.Mappers;
 using BergerFlowTrading.Server.SignalR;
@@ -108,6 +110,16 @@ namespace BergerFlowTrading.Server
             services.AddScoped<StrategyFactory>();
             services.AddScoped<StrategySettingsFactory>();
 
+            services.AddScoped<PlatformJobsRepository>();
+            services.AddScoped<PlatformLogsRepository>();
+            services.AddScoped<StrategyRunsRepository>();
+            services.AddScoped<StrategyLogsRepository>();
+            services.AddScoped<ExchangeLogsRepository>();
+
+            services.AddScoped<PlatformLogService>();
+
+            services.AddScoped<TradingPlatform>();
+
             services.AddSingleton<TradingJobServiceFactory>();
 
             // ===== Add Jwt Authentication ========
@@ -169,7 +181,7 @@ namespace BergerFlowTrading.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //UpdateDatabase(app);
+            UpdateDatabase(app);
             //Task.Run(() => CreateUserRoles(app)).Wait();
 
             app.UseResponseCompression();

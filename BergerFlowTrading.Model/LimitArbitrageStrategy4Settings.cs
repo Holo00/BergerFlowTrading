@@ -10,13 +10,12 @@ namespace BergerFlowTrading.Model
 {
     public class LimitArbitrageStrategy4Settings : AsUserModel
     {
-        public int? Exchange_ID_1 { get; set; }
+        [Required]
+        public int Exchange_ID_1 { get; set; }
         [ForeignKey("Exchange_ID_1")]
         public virtual Exchange Exchange_1 { get; set; }
 
-
-        public int? Exchange_ID_2 { get; set; }
-
+        public int Exchange_ID_2 { get; set; }
         [ForeignKey("Exchange_ID_2")]
         public virtual Exchange Exchange_2 { get; set; }
 

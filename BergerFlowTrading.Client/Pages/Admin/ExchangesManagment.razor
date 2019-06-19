@@ -168,76 +168,78 @@ else
 }
 
 @code {
-    List<ExchangeDTO> exchanges;
-    ExchangeDTO exchange;
+List<ExchangeDTO> exchanges;
+ExchangeDTO exchange;
 
-    protected bool isDelete = false;
-    protected bool isAdd = false;
+protected bool isDelete = false;
+protected bool isAdd = false;
 
-    protected string modalTitle { get; set; }
+protected string modalTitle { get; set; }
 
 
-    protected override async Task OnInitAsync()
+protected override async Task OnInitAsync()
+{
+    await Load();
+}
+
+protected async Task Load()
+{
+    exchanges = await uow.HttpExchangeRepository.GetAll();
+}
+
+protected async Task Save()
+{
+    Console.WriteLine(exchange.ID);
+
+    if (exchange.ID == 0)
     {
-        await Load();
+        await uow.HttpExchangeRepository.Create(exchange);
+    }
+    else
+    {
+        await uow.HttpExchangeRepository.Update(exchange);
     }
 
-    protected async Task Load()
+    this.isAdd = false;
+    await Load();
+}
+
+protected async Task Delete(int? id)
+{
+    if (exchange.ID != 0)
     {
-        exchanges = await uow.HttpExchangeRepository.GetAll();
+        await uow.HttpExchangeRepository.Delete(id.Value);
     }
 
-    protected async Task Save()
-    {
-        if (exchange.ID == null)
-        {
-            await uow.HttpExchangeRepository.Create(exchange);
-        }
-        else
-        {
-            await uow.HttpExchangeRepository.Update(exchange);
-        }
-
-        this.isAdd = false;
-        await Load();
-    }
-
-    protected async Task Delete(int? id)
-    {
-        if (exchange.ID != null)
-        {
-            await uow.HttpExchangeRepository.Delete(id.Value);
-        }
-
-        this.isDelete = false;
-        await Load();
-    }
+    this.isDelete = false;
+    await Load();
+}
 
 
-    protected void AddState()
-    {
-        exchange = new ExchangeDTO();
-        this.modalTitle = "Add Exchange";
-        this.isAdd = true;
-    }
+protected void AddState()
+{
+    exchange = new ExchangeDTO();
+    this.modalTitle = "Add Exchange";
+    this.isAdd = true;
+}
 
-    protected async Task EditState(int? ID)
-    {
-        exchange = await uow.HttpExchangeRepository.GetById(ID.Value);
-        this.modalTitle = "Edit Exchange";
-        this.isAdd = true;
-    }
+protected async Task EditState(int? ID)
+{
+    exchange = await uow.HttpExchangeRepository.GetById(ID.Value);
+    this.modalTitle = "Edit Exchange";
+    this.isAdd = true;
+}
 
-    protected async Task DeleteState(int? ID)
-    {
-        exchange = await uow.HttpExchangeRepository.GetById(ID.Value);
-        this.isDelete = true;
-    }
+protected async Task DeleteState(int? ID)
+{
+    exchange = await uow.HttpExchangeRepository.GetById(ID.Value);
+    this.isDelete = true;
+}
 
 
-    protected void closeModal()
-    {
-        this.isAdd = false;
-        this.isDelete = false;
-    }
+protected void closeModal()
+{
+    this.isAdd = false;
+    this.isDelete = false;
+}
 }
