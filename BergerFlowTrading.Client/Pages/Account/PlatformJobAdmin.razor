@@ -13,82 +13,63 @@
 
 @attribute [Authorize(Roles = "BasicPlan")]
 
-<div class="container">
-    <div class="row">
-        <h1>Test</h1>
-        <div class="col-sm">
+    <div class="container">
+        <div class="row">
+            @if (job == null || !job.IsRunning)
+            {
+                <button type="button" class="btn btn-success" @onclick="@StartJob">Start Platform</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-danger" @onclick="@StopJob">Stop Platform</button>
+            }
         </div>
-        <div class="col-sm">
+        <div class="row">
+            <h3>Platform Logs</h3>
+            @if (job != null && job.PlatformLogs != null && job.PlatformLogs.Any())
+            {
+
+            }
+        </div>
+        <div class="row">
+            <h3>Strategy Logs</h3>
+            @if (job != null && job.StrategyRuns != null && job.StrategyRuns.Any())
+            {
+
+            }
+        </div>
+        <div class="row">
+            <h3>Exchange Logs</h3>
         </div>
     </div>
-</div>
 
 
 @code {
-    PlatformJobsDTO job;
-    //HubConnection hub;
+PlatformJobsDTO job;
+List<StrategyRunsDTO> strategyRuns = new List<StrategyRunsDTO>();
+List<PlatformLogsDTO> platformLogs = new List<PlatformLogsDTO>();
+List<StrategyLogsDTO> strategyLogs  = new List<StrategyLogsDTO>();
+List<ExchangeLogsDTO> exchangeLogs = new List<ExchangeLogsDTO>();
 
-    bool IsJobRunning;
 
+protected override async Task OnInitAsync()
+{
+    job = await this.uow.HttpPlatformLiveLogsRepository.GetCurrentPlatformJob();
+    platformLogs = job.PlatformLogs.ToList();
+    strategyRuns = job.StrategyRuns.ToList();
+}
 
-    protected override async Task OnInitAsync()
-    {
-        //string token = (await uow.IdenitytService.GetUserState()).Token;
-        //Console.WriteLine($"{this.configuration["Client:ServerUrl"]}/TradingPlatformHub");
-        //hub = hubConnectionBuilder
-        //.WithUrl($"{this.configuration["Client:ServerUrl"]}/TradingPlatformHub"
-        //, options =>
-        //{
-        //    options.AccessTokenProvider  = async() =>
-        //    {
-        //        return (await uow.IdenitytService.GetUserState()).Token;
-        //    };
-        //}
-        //)
-        //.Build();
+protected async void StartJob()
+{
+    job = await this.uow.HttpPlatformLiveLogsRepository.StartPlatformJob();
+    platformLogs = job.PlatformLogs.ToList();
+    strategyRuns = job.StrategyRuns.ToList();
+}
 
-        //Console.WriteLine("HUB BUILD");
+protected async void StopJob()
+{
+    job = await this.uow.HttpPlatformLiveLogsRepository.StoptPlatformJob();
+    platformLogs = job.PlatformLogs.ToList();
+}
 
-        //hub.Closed += async (error) =>
-        //{
-        //    Console.WriteLine("Connection closed");
-        //    await Task.Delay(new Random().Next(0, 5) * 1000);
-        //    Console.WriteLine("Try Start Connection");
-        //    await hub.StartAsync();
-        //    Console.WriteLine("Connection started");
-        //};
-        //Console.WriteLine("3");
-
-    }
-
-    private async void Connect()
-    {
-        //hub.On<bool>("IsPlatformJobRunning_Result", result =>
-        //{
-        //    this.IsJobRunning = result;
-        //    Console.WriteLine($"IsPlatformJobRunning_Result, {result}");
-        //});
-
-        //try
-        //{
-        //    await hub.StartAsync();
-        //    Console.WriteLine("Connection started");
-        //}
-        //catch (Exception ex)
-        //{
-        //    Console.WriteLine(ex.Message);
-        //}
-    }
-
-    public async void Send_IsPlatformJobRunning()
-    {
-        try
-        {
-            //await hub.InvokeAsync("IsPlatformJobRunning");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
 }

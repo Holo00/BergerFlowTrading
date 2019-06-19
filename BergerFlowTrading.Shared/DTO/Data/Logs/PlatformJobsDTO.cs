@@ -12,6 +12,8 @@ namespace BergerFlowTrading.Shared.DTO.Data.Logs
 
         public DateTime StopTime { get; set; }
 
+        public bool IsRunning { get; set; }
+
         public virtual ICollection<PlatformLogsDTO> PlatformLogs { get; set; }
 
         public virtual ICollection<StrategyRunsDTO> StrategyRuns { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BergerFlowTrading.Shared.HttpUnitOfWork;
@@ -20,11 +21,17 @@ namespace BergerFlowTrading.Client
             Console.WriteLine("CheckingAuthState");
             var userInfo = await uow.IdenitytService.GetUserState();
 
-            var identity = userInfo != null && userInfo.IsAuthenticated
-                ? new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userInfo.UserName) }, "serverauth")
-                : new ClaimsIdentity();
+            if (userInfo != null && userInfo.IsAuthenticated)
+            { 
+                var claims = userInfo.Roles.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
+                claims.Add(new Claim(ClaimTypes.Name, userInfo.UserName));
 
-            return new AuthenticationState(new ClaimsPrincipal(identity));
+                var identity = new ClaimsIdentity(claims, "serverauth");
+
+                return new AuthenticationState(new ClaimsPrincipal(identity));
+            }
+
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
     }
 }

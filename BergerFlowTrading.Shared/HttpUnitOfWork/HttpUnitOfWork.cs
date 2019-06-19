@@ -18,6 +18,7 @@ namespace BergerFlowTrading.Shared.HttpUnitOfWork
         public HttpExchangeRepository HttpExchangeRepository { get; private set; }
         public HttpUserExchangeSecretRepository HttpUserExchangeSecretRepository { get; private set; }
         public HttpLimitArbitrageStrategy4SettingsRepository HttpLimitArbitrageStrategy4SettingsRepository { get; private set; }
+        public HttpPlatformLiveLogsRepository HttpPlatformLiveLogsRepository { get; private set; }
 
         public HttpUnitOfWork(
                                 IHttpContextAccessor context
@@ -26,6 +27,7 @@ namespace BergerFlowTrading.Shared.HttpUnitOfWork
                                 , HttpExchangeRepository HttpExchangeRepository
                                 , HttpUserExchangeSecretRepository HttpUserExchangeSecretRepository
                                 , HttpLimitArbitrageStrategy4SettingsRepository HttpLimitArbitrageStrategy4SettingsRepository
+                                , HttpPlatformLiveLogsRepository HttpPlatformLiveLogsRepository
                                 )
         {
             this.context = context;
@@ -34,6 +36,7 @@ namespace BergerFlowTrading.Shared.HttpUnitOfWork
             this.HttpExchangeRepository = HttpExchangeRepository;
             this.HttpUserExchangeSecretRepository = HttpUserExchangeSecretRepository;
             this.HttpLimitArbitrageStrategy4SettingsRepository = HttpLimitArbitrageStrategy4SettingsRepository;
+            this.HttpPlatformLiveLogsRepository = HttpPlatformLiveLogsRepository;
         }
     }
 }
