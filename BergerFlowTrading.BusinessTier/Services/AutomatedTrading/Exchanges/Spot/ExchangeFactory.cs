@@ -18,12 +18,26 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
         public List<ISpotExchangeFacade> exchanges { get; private set; }
 
         private readonly UserExchangeSecretRepository repoExchangeSecrets;
-        private readonly ILoggingService logger;
+        private readonly ExchangeLogService logger;
 
-        public ExchangeFactory(UserExchangeSecretRepository repoExchangeSecrets, ILoggingService logger)
+        public ExchangeFactory(UserExchangeSecretRepository repoExchangeSecrets, ExchangeLogService logger)
         {
             this.repoExchangeSecrets = repoExchangeSecrets;
             this.logger = logger;
+        }
+
+        public async Task<ISpotExchangeFacade> GetExchange(ExchangeDTO exx)
+        {
+            ISpotExchangeFacade ex = this.exchanges.FirstOrDefault(x => x.ExchangeName.ToString() == exx.Name);
+
+            if(ex != null)
+            {
+                return ex;
+            }
+            else
+            {
+                return await this.CreateExchanges(exx);
+            }
         }
 
         public async Task<ISpotExchangeFacade> CreateExchanges(ExchangeDTO exx)
@@ -33,17 +47,17 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             if (exx.Name == ExchangeName.Binance.ToString() && this.exchanges.FirstOrDefault(x => x.ExchangeName == ExchangeName.Binance) != null)
             {
                 UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID);
-                fac = new BinanceExchange(this.logger, exx, secrets);
+                fac = new BinanceExchange(exx, secrets, logger);
             }
             else if (exx.Name == ExchangeName.HitBTC.ToString() && this.exchanges.FirstOrDefault(x => x.ExchangeName == ExchangeName.Binance) != null)
             {
                 UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID);
-                fac = new HitBTCExchange(this.logger, exx, secrets);
+                fac = new HitBTCExchange(exx, secrets, logger);
             }
             else if (exx.Name == ExchangeName.KuCoin.ToString() && this.exchanges.FirstOrDefault(x => x.ExchangeName == ExchangeName.Binance) != null)
             {
                 UserExchangeSecretDTO secrets = await this.repoExchangeSecrets.GetByExchangeId(exx.ID);
-                fac = new KuCoinExchange(this.logger, exx, secrets);
+                fac = new KuCoinExchange(exx, secrets, logger);
             }
 
             if (fac != null)
@@ -56,6 +70,13 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
 
             return fac;
+        }
+
+        public void DisposeOf(ISpotExchangeFacade fac)
+        {
+            this.exchanges.Remove(fac);
+            fac.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

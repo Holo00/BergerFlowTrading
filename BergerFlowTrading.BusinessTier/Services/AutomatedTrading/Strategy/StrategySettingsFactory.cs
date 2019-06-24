@@ -12,12 +12,10 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy
     public class StrategySettingsFactory
     {
         private readonly LimitStrategy4SettingsRepository repoLimit4;
-        private readonly ExchangeFactory exchangeFactory;
 
-        public StrategySettingsFactory(LimitStrategy4SettingsRepository repoLimit4, ExchangeFactory exchangeFactory)
+        public StrategySettingsFactory(LimitStrategy4SettingsRepository repoLimit4)
         {
             this.repoLimit4 = repoLimit4;
-            this.exchangeFactory = exchangeFactory;
         }
 
         public async Task<List<IStrategySettingDTO>> LoadStrategies()
@@ -36,11 +34,6 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy
             List<ExchangeDTO> exchanges = limit4ToExecute.Select(x => x.Exchange_1)
                                             .Union(limit4ToExecute.Select(x => x.Exchange_2))
                                             .Distinct().ToList();
-
-            foreach (ExchangeDTO exx in exchanges)
-            {
-                await this.exchangeFactory.CreateExchanges(exx);
-            }
 
             return limit4ToExecute.Cast<IStrategySettingDTO>().ToList();
         }

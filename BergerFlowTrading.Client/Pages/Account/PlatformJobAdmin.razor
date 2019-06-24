@@ -45,31 +45,44 @@
 
 
 @code {
-PlatformJobsDTO job;
-List<StrategyRunsDTO> strategyRuns = new List<StrategyRunsDTO>();
-List<PlatformLogsDTO> platformLogs = new List<PlatformLogsDTO>();
-List<StrategyLogsDTO> strategyLogs  = new List<StrategyLogsDTO>();
-List<ExchangeLogsDTO> exchangeLogs = new List<ExchangeLogsDTO>();
+        PlatformJobsDTO job;
+        List<StrategyRunsDTO> strategyRuns = new List<StrategyRunsDTO>();
+        List<PlatformLogsDTO> platformLogs = new List<PlatformLogsDTO>();
+        List<StrategyLogsDTO> strategyLogs  = new List<StrategyLogsDTO>();
+        List<ExchangeLogsDTO> exchangeLogs = new List<ExchangeLogsDTO>();
 
 
 protected override async Task OnInitAsync()
-{
-    job = await this.uow.HttpPlatformLiveLogsRepository.GetCurrentPlatformJob();
-    platformLogs = job.PlatformLogs.ToList();
-    strategyRuns = job.StrategyRuns.ToList();
-}
+    {
+        job = await this.uow.HttpPlatformLiveLogsRepository.GetCurrentPlatformJob();
 
-protected async void StartJob()
-{
-    job = await this.uow.HttpPlatformLiveLogsRepository.StartPlatformJob();
-    platformLogs = job.PlatformLogs.ToList();
-    strategyRuns = job.StrategyRuns.ToList();
-}
+        if(job != null)
+        {
+            platformLogs = job.PlatformLogs.ToList();
+            strategyRuns = job.StrategyRuns.ToList();
+        }
+    }
 
-protected async void StopJob()
-{
-    job = await this.uow.HttpPlatformLiveLogsRepository.StoptPlatformJob();
-    platformLogs = job.PlatformLogs.ToList();
-}
+    protected async void StartJob()
+    {
+        job = await this.uow.HttpPlatformLiveLogsRepository.StartPlatformJob();
+
+        if (job != null)
+        {
+            platformLogs = job.PlatformLogs.ToList();
+            strategyRuns = job.StrategyRuns.ToList();
+        }
+    }
+
+    protected async void StopJob()
+    {
+        job = await this.uow.HttpPlatformLiveLogsRepository.StoptPlatformJob();
+
+        if(job != null)
+        {
+            platformLogs = job.PlatformLogs.ToList();
+            strategyRuns = job.StrategyRuns.ToList();
+        }
+    }
 
 }

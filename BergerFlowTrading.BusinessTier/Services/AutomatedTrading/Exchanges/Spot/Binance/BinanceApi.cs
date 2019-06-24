@@ -11,7 +11,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 {
     public class BinanceApi : SpotExchangeApiBase
     {
-        public BinanceApi(ExchangeDTO exchangeSettings, ILoggingService logger, UserExchangeSecretDTO secrets) : base(exchangeSettings, logger, secrets)
+        public BinanceApi(ExchangeDTO exchangeSettings, ExchangeLogService logger, UserExchangeSecretDTO secrets) : base(exchangeSettings, logger, secrets)
         {
 
         }

@@ -25,7 +25,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
         protected const string OBSERVED_KEY_ORDERS = "OB_ORDS";
         protected const string OBSERVED_KEY_ORDERBOOKS = "OB_BOOKS";
         protected const string OBSERVED_KEY_BALANCES = "OB_BAL";
-        protected const string OBSERVED_KEY_BALANCES_ALL = "OB_BAL";
+        protected const string OBSERVED_KEY_BALANCES_ALL = "OB_BAL_ALL";
         protected const string OBSERVED_KEY_TRADES = "OB_TRADES";
         protected const string OBSERVED_KEY_OWNTRADES = "OB_OWNTRADES";
         protected const string OBSERVED_KEY_CANDLE_M1 = "OB_C_M1";
@@ -37,8 +37,6 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
         protected const string OBSERVED_KEY_CANDLE_W1 = "OB_C_W1";
 
         protected List<(string key, string symbol, CancellationTokenSource source)> ObservedElements { get; set; }
-
-        protected ILoggingService logger { get; set; }
 
         protected ISpotExchangeApi api { get; set; }
 
@@ -54,18 +52,26 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 
         protected ExchangeDTO exchangeSettings { get; set; }
         protected UserExchangeSecretDTO secrets { get; set; }
+        protected ExchangeLogService logService { get; set; }
 
-        public SpotExchangeBase(ILoggingService logger, bool ObserveAllSymbolsMode, bool ObserveAllBalancesMode, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets)
+
+
+        public SpotExchangeBase(bool ObserveAllSymbolsMode
+                                , bool ObserveAllBalancesMode
+                                , ExchangeDTO exchangeSettings
+                                , UserExchangeSecretDTO secrets
+                                , ExchangeLogService logService
+            )
         {
             this.exchangeSettings = exchangeSettings;
             this.secrets = secrets;
 
-            this.logger = logger;
             this.ObservedElements = new List<(string key, string symbol, CancellationTokenSource source)>();
             this.exchangeModel = new List<ExchangeModel>();
             this.modelUpdater = new SpotExchangeModelUpdater(exchangeModel, this.ExchangeName);
             this.ObserveAllSymbolsMode = ObserveAllSymbolsMode;
             this.ObserveAllBalancesMode = ObserveAllBalancesMode;
+            this.logService = logService;
         }
 
         protected virtual CancellationTokenSource Observe(string key, string symbol)
@@ -345,7 +351,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -367,7 +373,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -389,7 +395,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -411,7 +417,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -433,7 +439,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -455,7 +461,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -477,7 +483,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -499,7 +505,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -523,7 +529,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
             catch (Exception ex)
             {
-                logger.Log(ex);
+                this.logService.LogException(this.exchangeSettings.ID, null, ex);
             }
         }
 
@@ -557,6 +563,14 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
             }
 
             return key;
+        }
+
+        public void Dispose()
+        {
+            if(!this.ObservedElements.Any())
+            {
+                GC.SuppressFinalize(this);
+            }
         }
     }
 }

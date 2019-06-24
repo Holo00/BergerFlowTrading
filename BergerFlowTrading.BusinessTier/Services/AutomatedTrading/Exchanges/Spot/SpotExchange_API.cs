@@ -11,8 +11,8 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 {
     public abstract class SpotExchange_API : SpotExchangeBase
     {
-        public SpotExchange_API(ILoggingService logger, bool ObserveAllSymbolsMode, bool ObserveAllBalancesMode, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets)
-            : base(logger, ObserveAllSymbolsMode, ObserveAllBalancesMode, exchangeSettings, secrets)
+        public SpotExchange_API(bool ObserveAllSymbolsMode, bool ObserveAllBalancesMode, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets, ExchangeLogService logService)
+            : base(ObserveAllSymbolsMode, ObserveAllBalancesMode, exchangeSettings, secrets, logService)
         {
         }
 
@@ -27,7 +27,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -52,7 +52,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -77,7 +77,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    this.logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -103,7 +103,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    this.logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -129,7 +129,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    this.logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -155,7 +155,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    this.logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -181,7 +181,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    this.logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -205,7 +205,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    this.logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {
@@ -231,7 +231,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    this.logService.LogException(this.exchangeSettings.ID, null, ex);
                 }
                 finally
                 {

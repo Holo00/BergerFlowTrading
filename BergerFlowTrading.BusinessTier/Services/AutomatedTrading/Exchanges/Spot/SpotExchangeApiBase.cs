@@ -18,7 +18,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
         protected List<(DateTime time, string name)> requests;
         protected HttpRequestHelper http { get; set; }
         protected ExchangeDTO settings { get; set; }
-        protected ILoggingService log { get; set; }
+        protected ExchangeLogService log { get; set; }
         protected UserExchangeSecretDTO secrets { get; set; }
 
 
@@ -30,7 +30,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
         protected int RateQuantityMax { get; set; }
 
 
-        public SpotExchangeApiBase(ExchangeDTO exchangeSettings, ILoggingService logger, UserExchangeSecretDTO secrets)
+        public SpotExchangeApiBase(ExchangeDTO exchangeSettings, ExchangeLogService logger, UserExchangeSecretDTO secrets)
         {
             this.requests = new List<(DateTime time, string name)>();
             this.http = new HttpRequestHelper(exchangeSettings.ApiTimeoutMilliseconds);
@@ -68,7 +68,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 
             if (logCalls)
             {
-                log.Log($"{verb} {fullUrl} Begin Request!");
+                log.Log(this.settings.ID, null, $"{verb} {fullUrl} Begin Request!");
             }
 
             DateTime dt = DateTime.Now;
@@ -86,7 +86,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
                     if (logCalls)
                     {
                         TimeSpan span = DateTime.Now - dt;
-                        log.Log($"{verb} {fullUrl} Received! Time to complete http request: {span.TotalMilliseconds.ToString("0")} ms");
+                        log.Log(this.settings.ID, null, $"{verb} {fullUrl} Received! Time to complete http request: {span.TotalMilliseconds.ToString("0")} ms");
                     }
                 }
                 else if (response.StatusCode != HttpStatusCode.NotFound)

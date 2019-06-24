@@ -8,10 +8,10 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 {
     public class KuCoinExchange : SpotExchange_WSS_API
     {
-        public KuCoinExchange(ILoggingService logger, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets)
-            : base(logger, true, true, exchangeSettings, secrets)
+        public KuCoinExchange(ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets, ExchangeLogService logService)
+            : base(true, true, exchangeSettings, secrets, logService)
         {
-            this.api = new KuCoinApi(exchangeSettings, logger, secrets);
+            this.api = new KuCoinApi(exchangeSettings, logService, secrets);
             this.wss = new KuCoinWSS();
             this.reader = new KuCoinReader();
         }

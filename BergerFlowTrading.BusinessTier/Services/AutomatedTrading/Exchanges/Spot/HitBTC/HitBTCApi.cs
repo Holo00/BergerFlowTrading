@@ -11,7 +11,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 {
     public class HitBTCApi : SpotExchangeApiBase
     {
-        public HitBTCApi(ExchangeDTO exchangeSettings, ILoggingService logger, UserExchangeSecretDTO secrets) : base(exchangeSettings, logger, secrets)
+        public HitBTCApi(ExchangeDTO exchangeSettings, ExchangeLogService logger, UserExchangeSecretDTO secrets) : base(exchangeSettings, logger, secrets)
         {
 
         }

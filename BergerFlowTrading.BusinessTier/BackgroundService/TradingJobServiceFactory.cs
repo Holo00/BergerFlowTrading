@@ -29,7 +29,7 @@ namespace BergerFlowTrading.BusinessTier.BackgroundService
             {
                 runningPlatforms[userId] = platform;
                 CancellationTokenSource token = new CancellationTokenSource();
-                await platform.StartPlatformJob(token.Token, userId);
+                await platform.StartPlatformJob(token, userId);
             }
 
             return IsPlatformJobRunning(userId);
@@ -40,6 +40,7 @@ namespace BergerFlowTrading.BusinessTier.BackgroundService
             if (IsPlatformJobRunning(userId))
             {
                 await runningPlatforms[userId].StopPlatformJob();
+                runningPlatforms[userId].Dispose();
                 this.runningPlatforms.Remove(userId);
             }
 

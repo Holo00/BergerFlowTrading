@@ -12,7 +12,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Strategy
         LimitArbitrage4
     }
 
-    public interface IStrategy
+    public interface IStrategy: IDisposable
     {
         Task Start(CancellationTokenSource token);
         Task Stop();

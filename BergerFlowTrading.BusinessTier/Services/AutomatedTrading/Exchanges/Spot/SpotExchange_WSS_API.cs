@@ -13,8 +13,8 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
     {
         protected ISpotExchangeWSS wss { get; set; }
 
-        public SpotExchange_WSS_API(ILoggingService logger, bool ObserveAllSymbolsMode, bool ObserveAllBalancesMode, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets)
-            : base(logger, ObserveAllSymbolsMode, ObserveAllBalancesMode, exchangeSettings, secrets)
+        public SpotExchange_WSS_API(bool ObserveAllSymbolsMode, bool ObserveAllBalancesMode, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets, ExchangeLogService logService)
+            : base(ObserveAllSymbolsMode, ObserveAllBalancesMode, exchangeSettings, secrets, logService)
         {
         }
 

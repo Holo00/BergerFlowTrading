@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spot
 {
-    public interface ISpotExchangeFacade
+    public interface ISpotExchangeFacade: IDisposable
     {
         ExchangeName ExchangeName { get; }
 

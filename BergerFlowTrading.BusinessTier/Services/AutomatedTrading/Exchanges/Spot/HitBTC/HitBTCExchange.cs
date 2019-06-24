@@ -8,10 +8,10 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 {
     public class HitBTCExchange : SpotExchange_WSS_API
     {
-        public HitBTCExchange(ILoggingService logger, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets)
-            : base(logger, true, true, exchangeSettings, secrets)
+        public HitBTCExchange(ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets, ExchangeLogService logService)
+            : base(true, true, exchangeSettings, secrets, logService)
         {
-            this.api = new HitBTCApi(exchangeSettings, logger, secrets);
+            this.api = new HitBTCApi(exchangeSettings, logService, secrets);
             this.wss = new HitBTCWSS();
             this.reader = new HitBTCReader();
         }

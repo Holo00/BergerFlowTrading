@@ -8,10 +8,10 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 {
     public class BinanceExchange : SpotExchange_WSS_API
     {
-        public BinanceExchange(ILoggingService logger, ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets)
-            : base(logger, true, true, exchangeSettings, secrets)
+        public BinanceExchange(ExchangeDTO exchangeSettings, UserExchangeSecretDTO secrets, ExchangeLogService logService)
+            : base(true, true, exchangeSettings, secrets, logService)
         {
-            this.api = new BinanceApi(exchangeSettings, logger, secrets);
+            this.api = new BinanceApi(exchangeSettings, logService, secrets);
             this.wss = new BinanceWSS();
             this.reader = new BinanceReader();
 

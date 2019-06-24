@@ -14,7 +14,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading.Exchanges.Spo
 {
     public class KuCoinApi : SpotExchangeApiBase
     {
-        public KuCoinApi(ExchangeDTO exchangeSettings, ILoggingService logger, UserExchangeSecretDTO secrets) : base(exchangeSettings, logger, secrets)
+        public KuCoinApi(ExchangeDTO exchangeSettings, ExchangeLogService logger, UserExchangeSecretDTO secrets) : base(exchangeSettings, logger, secrets)
         {
 
         }

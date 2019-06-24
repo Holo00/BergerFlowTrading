@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
 {
-    public class TradingPlatform
+    public class TradingPlatform: IDisposable
     {
         private readonly StrategySettingsFactory settingsFactory;
         private readonly StrategyFactory strategyFactory;
@@ -20,7 +20,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
 
         private string userId { get; set; }
 
-        private CancellationToken stoppingToken { get; set; }
+        private CancellationTokenSource stoppingToken { get; set; }
 
         private PlatformJobsDTO platformJob { get; set; }
 
@@ -52,20 +52,27 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
             this.strategies = new List<IStrategy>();
         }
 
-        public async Task StartPlatformJob(CancellationToken stoppingToken, string userId)
+        public async Task StartPlatformJob(CancellationTokenSource stoppingToken, string userId)
         {
             this.stoppingToken = stoppingToken;
             PlatformJobsDTO platformJob = await this.jobRepo.Insert(new PlatformJobsDTO() { StartTime = DateTime.UtcNow }, userId);
-            await this.PlatformLogService.Log(platformJob.ID, userId, "Starting Platform Job...", eventType.Info);
-            await this.RunStrategies();
+            this.PlatformLogService.Log(platformJob.ID, userId, "Starting Platform Job...", eventType.Info);
+
+            while(!stoppingToken.IsCancellationRequested)
+            {
+                this.PlatformLogService.Log(platformJob.ID, userId, "Running Strategies...", eventType.Info);
+                await this.RunStrategies();
+                await Task.Delay(60 * 10 * 1000, stoppingToken.Token);
+            }
         }
 
-        public Task StopPlatformJob()
+        public async Task StopPlatformJob()
         {
-            throw new NotImplementedException();
+            this.PlatformLogService.Log(platformJob.ID, userId, "Stopping Platform Job...", eventType.Info);
+            IEnumerable<IStrategySettingDTO> runningStrats = this.strategies.Select(x => x.strategyInfo);
+            await this.StopStrategies(runningStrats, new List<IStrategySettingDTO>());
+            this.Dispose();
         }
-
-
 
         public async Task<bool> RunStrategies()
         {
@@ -93,7 +100,7 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
                 await this.StartStrategies(newStraetgies);
 
                 //dispose of unused strategies
-                this.DisposeOfStrategies(stoppedStrats);
+                await this.DisposeOfStrategies(stoppedStrats);
                 //Dispose of the unused exchanges
                 this.DisposeOfExchanges(stoppedStrats);
 
@@ -101,19 +108,34 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
             }
             catch(Exception ex)
             {
-                //TODO logs
-                throw;
+                this.PlatformLogService.LogException(platformJob.ID, userId, ex);
+                return false;
             }
         }
 
-        private void DisposeOfStrategies(IEnumerable<IStrategy> strats)
+        private async Task DisposeOfStrategies(IEnumerable<IStrategy> strats)
         {
-            //todo
+            foreach(IStrategy s in strats)
+            {
+                if (s.IsRunning)
+                {
+                    await s.Stop();
+                }
+
+                var token = this.strategyTokens[s.Name];
+
+                if(token != null)
+                {
+                    token.Cancel();
+                }
+
+                s.Dispose();
+            }
         }
 
         private void DisposeOfExchanges(IEnumerable<IStrategy> strats)
         {
-            //todo
+            this.strategyFactory.DisposeOfExchanges(strats, this.strategies);
         }
 
 
@@ -123,19 +145,20 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
 
             List<IStrategy> toStartStrats = new List<IStrategy>();
 
+            List<Task<IStrategy>> tasks = new List<Task<IStrategy>>();
+
             foreach (IStrategySettingDTO s in newStrategies)
             {
-                IStrategy strat = strategyFactory.CreateStrategy(s, ref this.currencySemaphosres, ref this.concurrentSemaphore);
-
-                if(strat != null)
-                {
-                    toStartStrats.Add(strat);
-                }
+                tasks.Add(strategyFactory.CreateStrategy(s, this.currencySemaphosres, this.concurrentSemaphore));
             }
+
+            List<IStrategy> strats = (await Task.WhenAll(tasks)).ToList();
+            toStartStrats.AddRange(strats);
 
             //Start Strategies
             foreach (IStrategy strat in toStartStrats)
             {
+                this.PlatformLogService.Log(platformJob.ID, userId, $"Starting strategy {strat.Name}", eventType.Info);
                 CancellationTokenSource token = new CancellationTokenSource();
                 this.strategyTokens.Add(strat.Name, token);
                 await strat.Start(token);
@@ -177,8 +200,20 @@ namespace BergerFlowTrading.BusinessTier.Services.AutomatedTrading
         private async Task<bool> StopStrategy(IStrategySettingDTO strat)
         {
             IStrategy runningStrategy = this.strategies.FirstOrDefault(x => x.Name == strat.StrategyName);
+            this.PlatformLogService.Log(platformJob.ID, userId, $"Stopping strategy {runningStrategy.Name}", eventType.Info);
             await runningStrategy.Stop();
             return true;
+        }
+
+        public void Dispose()
+        {
+            this.stoppingToken.Cancel();
+            Task.Run(async () => { await this.DisposeOfStrategies(this.strategies); }).Wait();
+            this.strategies.Clear();
+            this.DisposeOfExchanges(this.strategies);
+            GC.SuppressFinalize(this.strategyFactory);
+            GC.SuppressFinalize(this.settingsFactory);
+            GC.SuppressFinalize(this);
         }
     }
 }
